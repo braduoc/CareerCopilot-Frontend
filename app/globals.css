@@ -1,26 +1,82 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@config "../tailwind.config.ts";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Fondos globales y tarjetas */
+    --background: 250 33% 98%;          /* #F8F7FF - Gris violeta muy claro */
+    --foreground: 245 40% 12%;          /* #121026 - Texto oscuro entintado */
+
+    --card: 0 0% 100%;                  /* #FFFFFF - Blanco puro para Cards */
+    --card-foreground: 245 40% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 245 40% 12%;
+
+    /* Color Primario: Violeta Eléctrico/Púrpura */
+    --primary: 267 84% 58%;             /* #7C3AED - Púrpura principal */
+    --primary-foreground: 0 0% 100%;
+
+    /* Color Secundario: Violeta Claro / Soft Tint */
+    --secondary: 255 100% 96%;          /* #F0EBFF - Fondo claro para ítems activos/sidebar */
+    --secondary-foreground: 267 84% 50%;
+
+    /* Elementos Muted y Bordes */
+    --muted: 248 30% 95%;               /* #F1F0FA */
+    --muted-foreground: 245 15% 50%;    /* #6B6880 - Texto secundario */
+
+    --accent: 255 100% 96%;
+    --accent-foreground: 267 84% 58%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 248 25% 91%;              /* #E7E5F2 - Bordes suaves */
+    --input: 248 25% 91%;
+    --ring: 267 84% 58%;
+
+    --radius: 0.85rem;                  /* Esquinas redondeadas */
+  }
+
+  .dark {
+    --background: 245 40% 8%;
+    --foreground: 0 0% 98%;
+    --card: 245 35% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 245 35% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 267 84% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 30% 18%;
+    --secondary-foreground: 267 84% 80%;
+    --muted: 250 30% 18%;
+    --muted-foreground: 245 15% 65%;
+    --accent: 250 30% 18%;
+    --accent-foreground: 267 84% 80%;
+    --border: 245 25% 20%;
+    --input: 245 25% 20%;
+    --ring: 267 84% 65%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.bg-brand-gradient {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #D946EF 100%);
 }

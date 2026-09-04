@@ -1,0 +1,108 @@
+Arquitectura General de IntegraciónEl sistema se compone de tres capas principales:[ Frontend / React Hooks ] 
+          │
+          ▼ (HTTP / API Routes)
+[ API Routes - Next.js (src/app/api/...) ]
+          │
+          ▼ (SDK / Prompts)
+[ Servicio de IA (OpenAI, Anthropic, Gemini, etc.) ]
+1. Variables de Entorno RequeridasCrea un archivo .env.local en la raíz del proyecto con la configuración del proveedor de IA que elijas:Bash# Ejemplo usando OpenAI
+OPENAI_API_KEY="sk-proj-tu-api-key-aqui"
+
+# O usando Anthropic Claude
+ANTHROPIC_API_KEY="sk-ant-tu-api-key-aqui"
+
+# O usando Google Gemini
+GEMINI_API_KEY="tu-gemini-api-key-aqui"
+2. Endpoints Requeridos (API Routes)Para conectar todos los Custom Hooks (useAts, useInterview, useJobMatch), debes implementar 4 rutas de API en Next.js App Router:Summary table de EndpointsRutaMétodoPropósitoHook Asociado/api/ats/analyzePOSTRecibe un archivo (PDF/DOCX) y genera el diagnóstico ATSuseAts/api/job-match/comparePOSTCompara un CV contra una descripción de empleouseJobMatch/api/interview/startPOSTInicia una sesión de entrevista y genera las preguntas inicialesuseInterview/api/interview/respondPOSTEvalúa la respuesta del candidato con metodología STAR y genera la siguiente interacciónuseInterview3. Especificación Técnica de los Endpoints3.1. Diagnóstico ATS (/api/ats/analyze)Método: POSTContent-Type: multipart/form-dataBody de Entrada:TypeScriptFormData {
+  file: File // Archivo PDF o DOCX del CV
+}
+Respuesta Esperada (200 OK):JSON{
+  "score": 78,
+  "summary": "El CV presenta buena estructura pero carece de palabras clave relevantes para roles senior.",
+  "sections": {
+    "contactInfo": true,
+    "workExperience": true,
+    "education": true,
+    "skills": false
+  },
+  "strengths": [
+    "Uso claro de verbos de acción",
+    "Formato de fechas uniforme"
+  ],
+  "improvements": [
+    "Incluir métricas cuantificables en los logros",
+    "Agregar una sección explicita de habilidades técnicas"
+  ],
+  "missingKeywords": ["Docker", "Kubernetes", "CI/CD", "TypeScript"]
+}
+3.2. Comparación de Trabajo / Job Match (/api/job-match/compare)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
+  "jobTitle": "Frontend Developer Senior",
+  "jobDescription": "Buscamos un desarrollador React con experiencia en Next.js, Tailwind y TypeScript...",
+  "cvText": "Texto extraído del CV del candidato..."
+}
+Respuesta Esperada (200 OK):JSON{
+  "matchPercentage": 82,
+  "analysis": "El perfil encaja muy bien con el stack tecnológico principal, pero presenta brechas en la parte de pruebas unitarias.",
+  "matchingSkills": ["React", "Next.js", "Tailwind CSS", "TypeScript"],
+  "missingSkills": ["Jest", "Cypress", "GraphQL"],
+  "recommendations": [
+    "Mencionar proyectos donde hayas implementado pruebas automatizadas",
+    "Destacar experiencia previa con APIs GraphQL si la posees"
+  ]
+}
+3.3. Inicio de Entrevista (/api/interview/start)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
+  "jobTitle": "Backend Engineer",
+  "seniority": "Senior",
+  "interviewType": "Technical",
+  "totalQuestions": 5
+}
+Respuesta Esperada (200 OK):JSON{
+  "sessionId": "session_123456",
+  "initialMessage": {
+    "id": "msg_001",
+    "role": "interviewer",
+    "content": "¡Hola! Bienvenido a tu simulación. Empecemos: ¿Puedes explicar cómo manejarías la concurrencia en un sistema de alto tráfico?",
+    "timestamp": "2026-09-04T17:30:00.000Z"
+  }
+}
+3.4. Respuesta y Retroalimentación de Entrevista (/api/interview/respond)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
+  "sessionId": "session_123456",
+  "userAnswer": "Para la concurrencia utilizaría un esquema de colas con Redis y trabajadores asíncronos...",
+  "currentQuestionIndex": 1
+}
+Respuesta Esperada (200 OK):JSON{
+  "feedbackMessage": {
+    "id": "msg_002",
+    "role": "interviewer",
+    "content": "Buena respuesta. Bajo el enfoque STAR, identifico bien la Situación y Tarea, pero te sugiero especificar más los **Resultados** medibles.",
+    "timestamp": "2026-09-04T17:31:00.000Z",
+    "starEvaluation": {
+      "situation": true,
+      "task": true,
+      "action": true,
+      "result": false
+    }
+  },
+  "nextQuestionMessage": {
+    "id": "msg_003",
+    "role": "interviewer",
+    "content": "Siguiente pregunta: ¿Cómo abordarías un problema de 'Memory Leak' en un servicio en producción?",
+    "timestamp": "2026-09-04T17:31:05.000Z"
+  },
+  "isFinished": false
+}
+4. Estructura de Prompts del Sistema (System Prompts)Para garantizar respuestas en JSON estructurado por parte de la IA, utiliza estos esquemas de prompt en tu servidor:System Prompt para Análisis ATSPlaintextEres un evaluador experto de Sistemas de Seguimiento de Candidatos (ATS). 
+Analiza el texto del CV adjunto y devuelve EXCLUSIVAMENTE un objeto JSON válido con el siguiente formato:
+{
+  "score": number (0-100),
+  "summary": string,
+  "sections": { "contactInfo": boolean, "workExperience": boolean, "education": boolean, "skills": boolean },
+  "strengths": string[],
+  "improvements": string[],
+  "missingKeywords": string[]
+}
+System Prompt para Entrevista Técnica (STAR)PlaintextActúas como un entrevistador técnico sénior. Tu objetivo es evaluar al candidato usando la metodología STAR (Situación, Tarea, Acción, Resultado).
+En cada respuesta del usuario:
+1. Brinda retroalimentación constructiva.
+2. Identifica qué componentes STAR cubrió.
+3. Haz la siguiente pregunta técnica relevante al puesto.
