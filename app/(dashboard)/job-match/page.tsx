@@ -108,7 +108,7 @@ export default function JobMatchPage() {
                 </ul>
 
                 {/* Banner de marca */}
-                <div className="p-4 rounded-xl bg-brand-gradient text-white space-y-1 mt-2 shadow-sm">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
                   <p className="text-xs font-semibold">Tip para mayor precisión</p>
                   <p className="text-[11px] opacity-90 leading-relaxed">
                     Pega el texto completo de la vacante (incluyendo requerimientos deseables) para obtener un porcentaje de match más certero.

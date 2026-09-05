@@ -107,7 +107,7 @@ export default function EmailPage() {
                 </ul>
 
                 {/* Banner con gradiente de marca */}
-                <div className="p-4 rounded-xl bg-brand-gradient text-white space-y-1 mt-2 shadow-sm">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
                   <p className="text-xs font-semibold">Tip de comunicación</p>
                   <p className="text-[11px] opacity-90 leading-relaxed">
                     Incluye siempre un enlace a tu LinkedIn o Portafolio actualizado en la firma del correo para facilitar el contacto.

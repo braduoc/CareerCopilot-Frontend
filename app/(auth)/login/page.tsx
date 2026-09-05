@@ -50,7 +50,7 @@ export default function LoginPage() {
 
       </aside>
 
-      <main className="relative z-10 -mt-10 flex min-h-[60vh] flex-col rounded-t-[1.5rem] bg-card px-4 py-5 shadow-[0_-12px_30px_rgba(36,27,59,0.12)] sm:-mt-12 sm:rounded-t-[2rem] sm:px-10 sm:py-8 lg:z-auto lg:mt-0 lg:min-h-screen lg:rounded-none lg:bg-transparent lg:px-16 lg:py-8 lg:shadow-none xl:px-24">
+      <main className="relative z-10 -mt-10 flex min-h-[60vh] flex-col rounded-t-[1.5rem] bg-card px-4 py-5 shadow-[0_-12px_30px_rgba(124,58,237,0.14)] sm:-mt-12 sm:rounded-t-[2rem] sm:px-10 sm:py-8 lg:z-auto lg:mt-0 lg:min-h-screen lg:rounded-none lg:bg-transparent lg:px-16 lg:py-8 lg:shadow-none xl:px-24">
         <div className="flex items-center justify-between">
           <Link
             href="/"

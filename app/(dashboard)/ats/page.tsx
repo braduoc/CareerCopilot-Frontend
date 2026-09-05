@@ -87,7 +87,7 @@ export default function AtsPage() {
                 </ul>
 
                 {/* Micro Banner de Gradiente */}
-                <div className="p-4 rounded-xl bg-brand-gradient text-white space-y-1 mt-2 shadow-sm">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
                   <p className="text-xs font-semibold">Pro tip de optimización</p>
                   <p className="text-[11px] opacity-90 leading-relaxed">
                     Evita usar tablas complejas o diseños multicolumna en tu PDF original para maximizar el puntaje de lectura.

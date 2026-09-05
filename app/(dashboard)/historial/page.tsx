@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,6 @@ import {
   Calendar,
   Clock,
   History,
-  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import { APP_ROUTES } from "@/lib/constants";
@@ -104,7 +103,7 @@ export default function HistorialPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-10">
       {/* Header Estilizado */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/60 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-violet-200 dark:border-violet-900/50 pb-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="secondary" className="bg-secondary text-primary hover:bg-secondary border-none px-3 py-1 gap-1.5 font-medium">
@@ -122,12 +121,12 @@ export default function HistorialPage() {
       </div>
 
       {/* Controles de Filtro y Búsqueda */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center bg-card p-4 rounded-2xl border border-border/60 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center bg-violet-50/50 dark:bg-violet-950/20 p-4 rounded-2xl border border-violet-200 dark:border-violet-900/50 shadow-sm">
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-muted-foreground" />
           <Input
             placeholder="Buscar por título o contenido..."
-            className="pl-10 bg-background/50 border-border/80 focus-visible:ring-primary"
+            className="pl-10 bg-background/70 border-violet-200 dark:border-violet-900/50 focus-visible:ring-primary"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -168,7 +167,7 @@ export default function HistorialPage() {
           filteredItems.map((item) => (
             <Card 
               key={item.id} 
-              className="border-border/60 hover:border-primary/40 hover:shadow-md transition-all duration-200 group bg-card"
+              className="border-violet-200 dark:border-violet-900/50 hover:border-violet-500/50 hover:shadow-md transition-all duration-200 group bg-card"
             >
               <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -183,15 +182,15 @@ export default function HistorialPage() {
                     <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                       {item.subtitle}
                     </p>
-                    <div className="flex items-center gap-3 mt-2.5 text-[11px] text-muted-foreground">
-                      <span className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-0.5 rounded-full font-medium">
+                        <div className="flex items-center gap-3 mt-2.5 text-[11px] text-muted-foreground">
+                          <span className="flex items-center gap-1.5 bg-violet-50 dark:bg-violet-950/30 px-2.5 py-0.5 rounded-full font-medium">
                         <Calendar className="w-3 h-3 text-primary" /> {item.date}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/60">
+                <div className="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-t-0 pt-3 sm:pt-0 border-violet-200 dark:border-violet-900/40">
                   {item.scoreOrMetric && (
                     <Badge 
                       variant="secondary"
@@ -210,7 +209,7 @@ export default function HistorialPage() {
             </Card>
           ))
         ) : (
-          <Card className="text-center py-16 border-dashed border-border/80 bg-card/40">
+          <Card className="text-center py-16 border-dashed border-violet-200 dark:border-violet-900/50 bg-violet-50/30 dark:bg-violet-950/10">
             <CardContent className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-secondary text-primary flex items-center justify-center mx-auto">
                 <Clock className="w-6 h-6" />

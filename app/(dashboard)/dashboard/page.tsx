@@ -26,7 +26,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Banner Principal / Hero con Gradiente */}
-      <section className="relative overflow-hidden rounded-2xl bg-brand-gradient p-6 sm:p-8 text-white shadow-md">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 p-6 sm:p-8 text-white shadow-md">
         <div className="relative z-10 space-y-3 max-w-xl">
           <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
             Tu próxima oportunidad empieza aquí

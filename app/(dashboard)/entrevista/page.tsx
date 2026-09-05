@@ -113,7 +113,7 @@ export default function EntrevistaPage() {
                 </ul>
 
                 {/* Micro Banner de Gradiente */}
-                <div className="p-4 rounded-xl bg-brand-gradient text-white space-y-1 mt-2 shadow-sm">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
                   <p className="text-xs font-semibold">Consejo para destacar</p>
                   <p className="text-[11px] opacity-90 leading-relaxed">
                     Usa ejemplos reales de tus experiencias previas y procura cuantificar los logros o impacto técnico obtenido.
@@ -136,7 +136,7 @@ export default function EntrevistaPage() {
             <Card className="border-primary/30 bg-secondary/40 shadow-sm text-center py-8 px-4 rounded-2xl relative overflow-hidden">
               <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/10 blur-2xl" />
               <CardContent className="space-y-4 relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-brand-gradient flex items-center justify-center mx-auto shadow-md text-white">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center mx-auto shadow-md text-white">
                   <Award className="w-8 h-8" />
                 </div>
                 <div className="space-y-1">
