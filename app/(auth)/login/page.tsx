@@ -3,11 +3,10 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_ROUTES, STORAGE_KEYS } from "@/lib/constants";
-import { Sparkles, ArrowRight, Lock, Mail } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lock, Mail } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,31 +37,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md shadow-lg border-border">
-        <CardHeader className="text-center space-y-2 pb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center mx-auto shadow-md">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <CardTitle className="text-xl font-bold text-foreground">
-            Bienvenido a CareerCopilot
-          </CardTitle>
-          <p className="text-xs text-muted-foreground">
-            Ingresa a tu cuenta para potenciar tu postulación laboral con IA
+    <div className="min-h-screen w-full bg-background text-foreground lg:grid lg:grid-cols-[0.9fr_1.1fr]">
+      <aside className="relative flex h-[40vh] min-h-[250px] max-h-[400px] flex-col justify-center overflow-hidden bg-violet-950 p-5 text-white sm:h-[42vh] sm:min-h-[280px] sm:p-8 lg:h-auto lg:min-h-screen lg:p-10 xl:p-14">
+        <div className="relative max-w-sm">
+          <h1 className="text-3xl font-semibold leading-[1.08] tracking-tight sm:text-4xl xl:text-5xl">
+            Inicia sesión
+          </h1>
+          <p className="mt-3 max-w-xs text-sm leading-6 text-violet-100/70">
+            Accede a CareerCopilot.
           </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-foreground">
-                Correo Electrónico
+        </div>
+
+      </aside>
+
+      <main className="relative z-10 -mt-10 flex min-h-[60vh] flex-col rounded-t-[1.5rem] bg-card px-4 py-5 shadow-[0_-12px_30px_rgba(36,27,59,0.12)] sm:-mt-12 sm:rounded-t-[2rem] sm:px-10 sm:py-8 lg:z-auto lg:mt-0 lg:min-h-screen lg:rounded-none lg:bg-transparent lg:px-16 lg:py-8 lg:shadow-none xl:px-24">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver a la landing
+          </Link>
+        </div>
+
+        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-start pt-4 sm:pt-8 lg:justify-center lg:py-12">
+          <form onSubmit={handleLogin} className="space-y-5 sm:space-y-6">
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-foreground">
+                Correo electrónico
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                <Mail className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="email"
                   placeholder="tu@correo.com"
-                  className="pl-9"
+                  className="h-11 rounded-xl border-border bg-card pl-11 text-sm shadow-sm focus-visible:ring-primary sm:h-12"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -71,16 +81,19 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-foreground">
-                Contraseña
-              </label>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-foreground">
+                  Contraseña
+                </label>
+                <span className="text-[11px] font-medium text-muted-foreground">Mínimo 8 caracteres</span>
+              </div>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                <Lock className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="pl-9"
+                  className="h-11 rounded-xl border-border bg-card pl-11 text-sm shadow-sm focus-visible:ring-primary sm:h-12"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -89,23 +102,28 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full gap-2 mt-2" disabled={isLoading || !email.trim()}>
-              {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
-              <ArrowRight className="w-4 h-4" />
+            <Button
+              type="submit"
+              className="h-11 w-full gap-2 rounded-xl bg-primary text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 sm:h-12"
+              disabled={isLoading || !email.trim()}
+            >
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-muted-foreground">
+          <div className="mt-6 border-t border-border pt-5 text-center text-xs text-muted-foreground sm:mt-8 sm:pt-6">
             ¿Aún no tienes cuenta?{" "}
             <Link
               href={APP_ROUTES.REGISTER}
-              className="text-primary dark:text-violet-300 font-semibold hover:underline"
+              className="font-bold text-primary transition-colors hover:text-foreground hover:underline"
             >
               Regístrate aquí
             </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+      </main>
     </div>
   );
 }
