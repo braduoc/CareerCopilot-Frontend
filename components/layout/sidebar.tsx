@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/lib/constants";
 
@@ -10,18 +9,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 min-h-screen border-r border-border/60 bg-card p-4 flex flex-col justify-between shadow-xs">
-      <div className="space-y-6">
-        {/* Logo con Gradiente de Marca */}
-        <div className="flex items-center gap-2.5 px-2 font-bold text-xl text-foreground">
-          <div className="p-2 bg-brand-gradient rounded-xl text-white shadow-xs">
-            <Bot className="w-5 h-5" />
-          </div>
-          <span className="tracking-tight">CareerCopilot</span>
-        </div>
-
-        {/* Links de navegación */}
-        <nav className="space-y-1.5">
+    <>
+      {/* Menú de Navegación Flotante Inferior Más Ancho en PC */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <nav className="flex items-center gap-2.5 bg-violet-600/95 dark:bg-violet-950/95 backdrop-blur-md px-5 py-3 rounded-full shadow-2xl border border-violet-400/30 text-white">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -30,33 +21,24 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={item.label}
                 className={cn(
-                  "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
+                  "flex items-center gap-2.5 px-3.5 py-2.5 rounded-full transition-all duration-200 relative justify-center md:px-5 md:py-2.5",
                   isActive
-                    ? "bg-secondary text-secondary-foreground font-semibold shadow-2xs"
-                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                    ? "bg-white text-violet-700 font-semibold shadow-md scale-105"
+                    : "text-violet-100 hover:text-white hover:bg-violet-700/60"
                 )}
               >
-                <Icon
-                  className={cn(
-                    "w-4 h-4 transition-colors",
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  )}
-                />
-                {item.label}
+                <Icon className="w-5 h-5 shrink-0" />
+                {/* Nombre visible solo en PC con más espacio y padding adaptado */}
+                <span className="hidden md:inline text-xs font-medium tracking-tight whitespace-nowrap">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
       </div>
-
-      {/* Footer del Sidebar */}
-      <div className="p-2 border-t border-border/60 text-[11px] text-muted-foreground font-medium flex items-center justify-between">
-        <span>CareerCopilot</span>
-        <span className="px-2 py-0.5 rounded-full bg-secondary text-primary font-semibold">
-          v1.0
-        </span>
-      </div>
-    </aside>
+    </>
   );
 }
