@@ -2,19 +2,26 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { User, Bell, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { User, Bell, Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS } from "@/lib/constants";
+import { APP_ROUTES, NAV_ITEMS, STORAGE_KEYS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Buscar el título de la página actual según la ruta
   const currentItem = NAV_ITEMS.find((item) => item.href === pathname);
   const title = currentItem ? currentItem.label : "Dashboard";
+
+  const handleLogout = () => {
+    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+    router.push(APP_ROUTES.LOGIN);
+  };
 
   return (
     <header className="h-16 border-b border-border/60 bg-card/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-40 shadow-2xs">
@@ -95,6 +102,17 @@ export function Header() {
         </div>
 
         <div className="h-5 w-px bg-border/60 mx-1" />
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleLogout}
+          className="gap-2 text-muted-foreground hover:text-destructive"
+          aria-label="Cerrar sesión"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="hidden sm:inline">Cerrar sesión</span>
+        </Button>
 
         {/* Perfil de Usuario */}
         <div className="flex items-center gap-3 pl-1">
