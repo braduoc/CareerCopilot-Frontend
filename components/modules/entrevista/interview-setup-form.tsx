@@ -32,7 +32,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
     <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
       <CardHeader className="pb-4 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/50  rounded-t-xl">
         <CardTitle className="flex items-center gap-2.5 text-base font-semibold text-foreground">
-          <div className="p-2 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-300 rounded-xl shadow-2xs">
+          <div className="p-2 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-200 rounded-xl shadow-2xs">
             <MessageSquare className="w-4 h-4" />
           </div>
           Configurar Simulación de Entrevista
@@ -42,7 +42,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-foreground">
-              Cargo / Rol a Simular <span className="text-violet-600 dark:text-violet-400">*</span>
+              Cargo / Rol a Simular <span className="text-violet-600 dark:text-violet-200">*</span>
             </label>
             <Input
               placeholder="Ej. Full Stack Engineer, Product Manager..."
@@ -50,7 +50,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
               onChange={(e) => setJobTitle(e.target.value)}
               required
               disabled={isLoading}
-              className="rounded-xl border-violet-200 dark:border-violet-800/60 focus-visible:ring-violet-500/20 focus-visible:border-violet-500"
+              className="rounded-xl border-violet-200 dark:border-violet-900/60 focus-visible:ring-violet-600/20 focus-visible:border-violet-600"
             />
           </div>
 
@@ -60,7 +60,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
                 Tipo de Preguntas
               </label>
               <select
-                className="flex h-9 w-full rounded-xl border border-violet-200 dark:border-violet-800/60 bg-background px-3 py-1 text-xs text-foreground shadow-2xs transition-colors focus-visible:border-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-9 w-full rounded-xl border border-violet-200 dark:border-violet-900/60 bg-background px-3 py-1 text-xs text-foreground shadow-2xs transition-colors focus-visible:border-violet-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600/20 disabled:cursor-not-allowed disabled:opacity-50"
                 value={category}
                 onChange={(e) => setCategory(e.target.value as QuestionCategory | "mixed")}
                 disabled={isLoading}
@@ -77,7 +77,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
                 Cantidad de Preguntas
               </label>
               <select
-                className="flex h-9 w-full rounded-xl border border-violet-200 dark:border-violet-800/60 bg-background px-3 py-1 text-xs text-foreground shadow-2xs transition-colors focus-visible:border-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-9 w-full rounded-xl border border-violet-200 dark:border-violet-900/60 bg-background px-3 py-1 text-xs text-foreground shadow-2xs transition-colors focus-visible:border-violet-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600/20 disabled:cursor-not-allowed disabled:opacity-50"
                 value={numberOfQuestions}
                 onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
                 disabled={isLoading}
@@ -91,7 +91,7 @@ export function InterviewSetupForm({ onStartSession, isLoading = false }: Interv
 
           <Button
             type="submit"
-            className="w-full gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow-xs hover:shadow-md hover:shadow-violet-500/20 transition-all h-10 text-xs"
+            className="w-full gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow-xs hover:shadow-md hover:shadow-violet-600/20 transition-all h-10 text-xs"
             disabled={isLoading || !jobTitle.trim()}
           >
             {isLoading ? (

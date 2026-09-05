@@ -16,11 +16,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-violet-500/20 selection:text-violet-600">
+    <div className="min-h-screen bg-background text-foreground selection:bg-violet-600/20 selection:text-violet-600">
       {/* Fondo con brillo difuminado sutil */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
-        <div className="absolute top-1/2 -left-40 h-96 w-96 rounded-full bg-violet-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-violet-200/10 blur-3xl" />
+        <div className="absolute top-1/2 -left-40 h-96 w-96 rounded-full bg-violet-200/5 blur-3xl" />
       </div>
 
       {/* Header / Navbar superior */}
@@ -58,8 +58,8 @@ export default function Home() {
       <main className="mx-auto max-w-6xl px-6 lg:px-10">
         {/* Hero Section */}
         <section className="flex flex-col items-center text-center py-20 lg:py-28 max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 dark:border-violet-900/60 bg-violet-50/50 px-3.5 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-300">
-            <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 dark:border-violet-900/60 bg-violet-50/50 px-3.5 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-200">
+            <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-200" />
             Tu copiloto de empleabilidad con IA
           </div>
           
@@ -76,7 +76,7 @@ export default function Home() {
 
           <div className="pt-2">
             <Link href="/register">
-              <Button size="lg" className="gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow-md hover:shadow-violet-500/20 text-sm h-12 px-8">
+              <Button size="lg" className="gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow-md hover:shadow-violet-600/20 text-sm h-12 px-8">
                 Escanear mi CV Gratis <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

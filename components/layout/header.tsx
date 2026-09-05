@@ -44,7 +44,7 @@ export function Header() {
           {/* Panel flotante: ancla debajo del botón, ancho ajustado al contenido */}
           <div
             className={cn(
-              "absolute left-0 top-full mt-2 min-w-[200px] origin-top-left rounded-2xl bg-violet-600/95 dark:bg-violet-950/95 backdrop-blur-md p-1.5 shadow-2xl border border-violet-400/30 transition-all duration-200 ease-out z-50",
+              "absolute left-0 top-full mt-2 min-w-[200px] origin-top-left rounded-2xl bg-violet-600/95 dark:bg-violet-950/95 backdrop-blur-md p-1.5 shadow-2xl border border-violet-200/30 transition-all duration-200 ease-out z-50",
               isMenuOpen
                 ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                 : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
@@ -95,7 +95,7 @@ export function Header() {
       </div>
 
       {/* Navegación horizontal integrada en el header (escritorio) */}
-      <nav className="hidden lg:flex items-center gap-1 bg-violet-700/40 rounded-full p-1.5 border border-violet-400/30">
+      <nav className="hidden lg:flex items-center gap-1 bg-violet-700/40 rounded-full p-1.5 border border-violet-200/30">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -133,7 +133,7 @@ export function Header() {
 
       {/* Acciones de usuario y notificaciones */}
       <div className="flex items-center gap-3">
-        <div className="h-5 w-px bg-violet-400/30 mx-1" />
+        <div className="h-5 w-px bg-violet-200/30 mx-1" />
 
         <Button
           variant="ghost"

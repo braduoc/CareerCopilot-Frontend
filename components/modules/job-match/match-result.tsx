@@ -45,7 +45,7 @@ export function MatchResult({ result }: MatchResultProps) {
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-semibold">
               <span className="text-muted-foreground">Nivel de Compatibilidad</span>
-              <span className="text-violet-600 dark:text-violet-400">{matchPercentage}%</span>
+              <span className="text-violet-600 dark:text-violet-200">{matchPercentage}%</span>
             </div>
             <Progress value={matchPercentage} className="h-2.5 bg-violet-100 dark:bg-violet-950 [&>div]:bg-violet-600" />
           </div>
@@ -61,7 +61,7 @@ export function MatchResult({ result }: MatchResultProps) {
         <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
           <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/30 dark:bg-violet-950/10 rounded-t-xl">
             <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-300 rounded-lg">
+              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-200 rounded-lg">
                 <Target className="w-4 h-4" />
               </div>
               Hard Skills (Técnicas)
@@ -116,7 +116,7 @@ export function MatchResult({ result }: MatchResultProps) {
         <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
           <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/30 dark:bg-violet-950/10 rounded-t-xl">
             <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-300 rounded-lg">
+              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-200 rounded-lg">
                 <Target className="w-4 h-4" />
               </div>
               Soft Skills & Cultura
@@ -171,14 +171,14 @@ export function MatchResult({ result }: MatchResultProps) {
       {/* Recomendaciones Estratégicas */}
       <Card className="border-violet-200 dark:border-violet-900/50 bg-violet-50/20 dark:bg-violet-950/10 shadow-xs">
         <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-100/40 dark:bg-violet-900/20 rounded-t-xl">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-violet-700 dark:text-violet-300">
-            <Sparkles className="w-4 h-4 text-violet-600 dark:text-violet-400" /> Recomendaciones para Personalizar tu Postulación
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-violet-700 dark:text-violet-200">
+            <Sparkles className="w-4 h-4 text-violet-600 dark:text-violet-200" /> Recomendaciones para Personalizar tu Postulación
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-2.5">
           {recommendations.map((rec, idx) => (
             <div key={idx} className="flex gap-2.5 items-start text-xs text-muted-foreground pb-2 border-b border-violet-100/60 dark:border-violet-900/20 last:border-none last:pb-0">
-              <span className="text-violet-600 dark:text-violet-400 font-bold">•</span>
+              <span className="text-violet-600 dark:text-violet-200 font-bold">•</span>
               <p className="leading-relaxed">{rec}</p>
             </div>
           ))}

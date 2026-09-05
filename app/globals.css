@@ -30,8 +30,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 245 45% 10%;
 
-    /* Primario: Púrpura eléctrico con alto contraste sobre blanco */
-    --primary: 267 84% 54%;             /* #7622ED */
+    /* Primario: violet-600 */
+    --primary: 262 83% 58%;             /* #7C3AED */
     --primary-foreground: 0 0% 100%;
 
     /* Secundario: Fondo suave con texto violeta oscuro (ratio > 4.5:1) */
@@ -50,7 +50,7 @@
 
     --border: 248 20% 86%;              /* #D7D4E6 - Bordes más definidos */
     --input: 248 20% 86%;
-    --ring: 267 84% 54%;
+    --ring: 262 83% 58%;
 
     --radius: 0.85rem;
   }
@@ -66,8 +66,8 @@
     --popover: 245 35% 10%;
     --popover-foreground: 250 20% 98%;
 
-    /* Primario en dark: Un tono ligeramente más brillante para destacar sobre fondo oscuro */
-    --primary: 267 85% 66%;             /* #9B51E0 */
+    /* Primario en dark: violet-400 */
+    --primary: 262 83% 70%;
     --primary-foreground: 0 0% 100%;
 
     /* Secundario dark */
@@ -85,10 +85,10 @@
 
     --border: 245 25% 22%;
     --input: 245 25% 22%;
-    --ring: 267 85% 66%;
+    --ring: 262 83% 70%;
   }
 }
 
 .bg-brand-gradient {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #C026D3 100%);
+  background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
 }

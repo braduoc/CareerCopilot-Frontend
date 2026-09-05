@@ -28,7 +28,7 @@ export function ChatBox({ messages }: ChatBoxProps) {
           }`}
         >
           {msg.sender === "ai" && (
-            <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center text-violet-600 dark:text-violet-300 shrink-0 border border-violet-200 dark:border-violet-800/50 shadow-2xs">
+            <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center text-violet-600 dark:text-violet-200 shrink-0 border border-violet-200 dark:border-violet-900/50 shadow-2xs">
               <Bot className="w-4 h-4" />
             </div>
           )}
@@ -50,7 +50,7 @@ export function ChatBox({ messages }: ChatBoxProps) {
                 <div className="mb-2 flex items-center gap-2">
                   <Badge 
                     variant="outline" 
-                    className="text-[10px] uppercase font-semibold border-violet-300 dark:border-violet-800 bg-violet-100/50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300"
+                    className="text-[10px] uppercase font-semibold border-violet-200 dark:border-violet-900 bg-violet-100/50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-200"
                   >
                     {msg.questionData.category}
                   </Badge>
@@ -63,8 +63,8 @@ export function ChatBox({ messages }: ChatBoxProps) {
             {msg.feedbackData && (
               <Card className="border-violet-200 dark:border-violet-900/50 bg-violet-50/30  shadow-xs">
                 <CardHeader className="py-2.5 px-4 flex flex-row items-center justify-between border-b border-violet-100 dark:border-violet-900/40 bg-violet-100/40 dark:bg-violet-900/20 rounded-t-xl">
-                  <CardTitle className="text-xs font-semibold text-violet-700 dark:text-violet-300 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-violet-600 dark:text-violet-400" /> Evaluación de tu Respuesta
+                  <CardTitle className="text-xs font-semibold text-violet-700 dark:text-violet-200 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-violet-600 dark:text-violet-200" /> Evaluación de tu Respuesta
                   </CardTitle>
                   <Badge 
                     variant="outline"
@@ -111,7 +111,7 @@ export function ChatBox({ messages }: ChatBoxProps) {
                   {msg.feedbackData.suggestedAnswer && (
                     <div className="pt-2 border-t border-violet-100 dark:border-violet-900/40">
                       <p className="font-semibold text-violet-900 dark:text-violet-200 mb-1.5 flex items-center gap-1">
-                        <Lightbulb className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" /> Respuesta Sugerida / Modelo:
+                        <Lightbulb className="w-3.5 h-3.5 text-violet-600 dark:text-violet-200" /> Respuesta Sugerida / Modelo:
                       </p>
                       <p className="italic text-muted-foreground bg-card/80 p-3 rounded-xl border border-violet-200/60 dark:border-violet-900/30 leading-relaxed shadow-2xs">
                         "{msg.feedbackData.suggestedAnswer}"
