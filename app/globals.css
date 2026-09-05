@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@config "../tailwind.config.ts";
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -22,61 +21,74 @@
 @layer base {
   :root {
     /* Fondos globales y tarjetas */
-    --background: 250 33% 98%;          /* #F8F7FF - Gris violeta muy claro */
-    --foreground: 245 40% 12%;          /* #121026 - Texto oscuro entintado */
+    --background: 250 33% 98%;          /* #F8F7FF */
+    --foreground: 245 45% 10%;          /* #0F0E1F - Oscurecido para mayor legibilidad */
 
-    --card: 0 0% 100%;                  /* #FFFFFF - Blanco puro para Cards */
-    --card-foreground: 245 40% 12%;
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 245 45% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 245 40% 12%;
+    --popover-foreground: 245 45% 10%;
 
-    /* Color Primario: Violeta Eléctrico/Púrpura */
-    --primary: 267 84% 58%;             /* #7C3AED - Púrpura principal */
+    /* Primario: Púrpura eléctrico con alto contraste sobre blanco */
+    --primary: 267 84% 54%;             /* #7622ED */
     --primary-foreground: 0 0% 100%;
 
-    /* Color Secundario: Violeta Claro / Soft Tint */
-    --secondary: 255 100% 96%;          /* #F0EBFF - Fondo claro para ítems activos/sidebar */
-    --secondary-foreground: 267 84% 50%;
+    /* Secundario: Fondo suave con texto violeta oscuro (ratio > 4.5:1) */
+    --secondary: 255 85% 95%;           /* #ECE5FF */
+    --secondary-foreground: 267 85% 36%;/* #4A12B3 - Oscurecido para contraste sobre fondo claro */
 
-    /* Elementos Muted y Bordes */
-    --muted: 248 30% 95%;               /* #F1F0FA */
-    --muted-foreground: 245 15% 50%;    /* #6B6880 - Texto secundario */
+    /* Muted & Bordes: Ajustado para no perderse */
+    --muted: 248 25% 93%;               /* #EAE8F5 */
+    --muted-foreground: 245 20% 38%;    /* #4C4863 - Texto secundario con mayor contraste */
 
-    --accent: 255 100% 96%;
-    --accent-foreground: 267 84% 58%;
+    --accent: 255 85% 95%;
+    --accent-foreground: 267 85% 36%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 248 25% 91%;              /* #E7E5F2 - Bordes suaves */
-    --input: 248 25% 91%;
-    --ring: 267 84% 58%;
+    --border: 248 20% 86%;              /* #D7D4E6 - Bordes más definidos */
+    --input: 248 20% 86%;
+    --ring: 267 84% 54%;
 
-    --radius: 0.85rem;                  /* Esquinas redondeadas */
+    --radius: 0.85rem;
   }
 
   .dark {
-    --background: 245 40% 8%;
-    --foreground: 0 0% 98%;
-    --card: 245 35% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 245 35% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 267 84% 65%;
+    /* Fondo más puro para evitar tinte lavado */
+    --background: 245 40% 6%;           /* #0A0914 */
+    --foreground: 250 20% 98%;          /* #FAFAFC */
+
+    --card: 245 35% 10%;                /* #131124 */
+    --card-foreground: 250 20% 98%;
+
+    --popover: 245 35% 10%;
+    --popover-foreground: 250 20% 98%;
+
+    /* Primario en dark: Un tono ligeramente más brillante para destacar sobre fondo oscuro */
+    --primary: 267 85% 66%;             /* #9B51E0 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 250 30% 18%;
-    --secondary-foreground: 267 84% 80%;
-    --muted: 250 30% 18%;
-    --muted-foreground: 245 15% 65%;
-    --accent: 250 30% 18%;
-    --accent-foreground: 267 84% 80%;
-    --border: 245 25% 20%;
-    --input: 245 25% 20%;
-    --ring: 267 84% 65%;
+
+    /* Secundario dark */
+    --secondary: 250 30% 16%;
+    --secondary-foreground: 267 85% 85%;
+
+    --muted: 250 30% 16%;
+    --muted-foreground: 245 15% 72%;    /* #AFADC2 - Más claro para lectura cómoda en dark mode */
+
+    --accent: 250 30% 16%;
+    --accent-foreground: 267 85% 85%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 245 25% 22%;
+    --input: 245 25% 22%;
+    --ring: 267 85% 66%;
   }
 }
 
 .bg-brand-gradient {
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #D946EF 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #C026D3 100%);
 }

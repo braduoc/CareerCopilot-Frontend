@@ -1,3 +1,24 @@
-import DashboardLayout from "../../src/app/(dashboard)/layout";
+import { Header } from "@/components/layout/header";
+import { Sidebar } from "@/components/layout/sidebar";
 
-export default DashboardLayout;
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-screen bg-background text-foreground">
+      {/* Sidebar Fijo */}
+      <Sidebar />
+
+      {/* Área principal de contenido */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header />
+        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
