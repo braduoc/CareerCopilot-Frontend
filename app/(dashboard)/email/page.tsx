@@ -1,132 +1,113 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { EmailGeneratorForm } from "@/components/modules/email/email-generator-form";
-import { EmailPreview } from "@/components/modules/email/email-preview";
-import { AtsSkeleton } from "@/components/modules/ats/ats-skeleton";
-import { EmailGeneratePayload, EmailGenerateResult } from "@/types/email";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Mail, Send, CheckCircle2 } from "lucide-react";
+import { Suspense } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Mail, Sparkles, ArrowLeft, Copy, CheckCircle2, AlertCircle } from "lucide-react"
 
-// Datos de prueba para simular la generación del correo vía IA
-const MOCK_EMAIL_RESULT: EmailGenerateResult = {
-  subject: "Postulación a Senior Frontend Developer - [Tu Nombre]",
-  body: `Estimado/a Reclutador/a,
+function EmailContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const historyId = searchParams.get("id")
 
-Espero que se encuentre muy bien.
-
-Le escribo para expresar mi gran interés en la posición de Senior Frontend Developer en Tech Corp. Cuento con experiencia liderando desarrollos en React, TypeScript y Next.js, enfocado siempre en construir arquitecturas escalables y optimizar la experiencia de usuario.
-
-Al revisar la vacante, identifiqué que buscan a alguien con capacidad para entregar soluciones de alto rendimiento y colaborar de cerca con equipos de producto, habilidades que he consolidado activamente en mis últimos proyectos.
-
-Adjunto mi Curriculum Vitae para su revisión. Quedo a su disposición para conversar sobre cómo mi perfil puede aportar valor a los objetivos actuales de Tech Corp.
-
-Agradezco de antemano su tiempo y consideración.
-
-Atentamente,
-[Tu Nombre]
-[Teléfono] | [LinkedIn/Portfolio]`,
-};
-
-export default function EmailPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<EmailGenerateResult | null>(null);
-
-  const handleGenerate = (payload: EmailGeneratePayload) => {
-    setIsLoading(true);
-    setResult(null);
-
-    // Simulación de llamado a la API de IA (2 segundos)
-    setTimeout(() => {
-      setResult({
-        ...MOCK_EMAIL_RESULT,
-        subject: `Postulación a ${payload.jobTitle} - [Tu Nombre]`,
-      });
-      setIsLoading(false);
-    }, 2000);
-  };
+  // Estado de protección cuando se ingresa directo sin ID
+  if (!historyId) {
+    return (
+      <Card className="border-border/60 text-center py-12 px-4 shadow-sm">
+        <CardContent className="space-y-4 max-w-md mx-auto">
+          <div className="p-3 bg-amber-50 text-amber-600 rounded-full w-fit mx-auto">
+            <AlertCircle className="h-8 w-8" />
+          </div>
+          <h2 className="text-xl font-bold">No has seleccionado ningún análisis</h2>
+          <p className="text-sm text-muted-foreground">
+            Para generar un correo de presentación personalizado, selecciona primero un registro desde tu historial.
+          </p>
+          <Button
+            onClick={() => router.push("/historial")}
+            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Ir al Historial de Análisis
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-10">
-      {/* Header Estilizado con Badge de IA */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/60 pb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary" className="bg-secondary text-primary hover:bg-secondary border-none px-3 py-1 gap-1.5 font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Redacción con IA Personalizada
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight">Generador de Email</h1>
+            <Badge variant="secondary" className="gap-1 bg-blue-100 text-blue-700">
+              <Sparkles className="h-3 w-3" /> Precargado desde Historial
             </Badge>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Generador de Correos & Cartas
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl">
-            Crea mensajes personalizados para postulaciones, seguimientos de entrevistas o contactos directos adaptados a la vacante y empresa.
+          <p className="text-sm text-muted-foreground mt-1">
+            Correo generado automáticamente para el registro ID: <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-blue-700">{historyId}</code>
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.push("/historial")}
+          className="gap-1.5 text-xs self-start md:self-auto"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Volver al Historial
+        </Button>
       </div>
 
-      {/* Grid de Contenido Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Formulario de Configuración (7 columnas si no hay resultado, o ancho adaptativo) */}
-        <div className={result || isLoading ? "lg:col-span-12 space-y-6" : "lg:col-span-7 space-y-6"}>
-          <EmailGeneratorForm onSubmit={handleGenerate} isLoading={isLoading} />
-        </div>
-
-        {/* Panel lateral informativo (sólo visible antes de generar) */}
-        {!result && !isLoading && (
-          <div className="lg:col-span-5 space-y-4">
-            <Card className="border-border/60 shadow-sm bg-card/50 backdrop-blur">
-              <CardContent className="p-6 space-y-5">
-                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-primary" />
-                  ¿Por qué personalizar tus emails?
-                </h3>
-                
-                <ul className="space-y-4 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-primary shrink-0">
-                      <Send className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Aumenta la tasa de respuesta</p>
-                      <p className="mt-0.5">Los correos dirigidos con contexto del rol captan la atención de los reclutadores en los primeros 5 segundos.</p>
-                    </div>
-                  </li>
-
-                  <li className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-primary shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Tono profesional e impecable</p>
-                      <p className="mt-0.5">La IA estructura la propuesta de valor destacando tus fortalezas sin sonar genérico.</p>
-                    </div>
-                  </li>
-                </ul>
-
-                {/* Banner con gradiente de marca */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
-                  <p className="text-xs font-semibold">Tip de comunicación</p>
-                  <p className="text-[11px] opacity-90 leading-relaxed">
-                    Incluye siempre un enlace a tu LinkedIn o Portafolio actualizado en la firma del correo para facilitar el contacto.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+      <Card className="border-border/60 shadow-sm">
+        <CardHeader className="border-b border-border/40 bg-muted/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-600 text-white rounded-lg">
+                <Mail className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Carta de Presentación / Email</CardTitle>
+                <CardDescription className="text-xs">
+                  Redactado en base a tu perfil y los requerimientos de la oferta
+                </CardDescription>
+              </div>
+            </div>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+              <Copy className="h-3.5 w-3.5" />
+              Copiar Texto
+            </Button>
           </div>
-        )}
-      </div>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="p-4 rounded-lg bg-blue-50/60 border border-blue-100 text-sm space-y-3">
+            <p className="font-semibold text-blue-900 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-blue-600" />
+              Borrador Sugerido:
+            </p>
+            <div className="text-blue-950 space-y-2 leading-relaxed whitespace-pre-line font-sans">
+              {`Estimado/a Equipo de Selección,
 
-      {/* Skeleton / Vista previa */}
-      {isLoading && <AtsSkeleton />}
+Les escribo para expresar mi gran interés en la posición de Desarrollador Frontend. Tras revisar los requisitos de la vacante, estoy convencido de que mi experiencia construyendo interfaces con React, TypeScript y Next.js me permite aportar valor inmediato a su equipo.
 
-      {!isLoading && result && (
-        <div className="pt-2">
-          <EmailPreview result={result} />
-        </div>
-      )}
+Quedo a su disposición para coordinar una entrevista.
+
+Atentamente,
+Candidato`}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
+}
+
+export default function EmailPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Cargando borrador de email...</div>}>
+      <EmailContent />
+    </Suspense>
+  )
 }

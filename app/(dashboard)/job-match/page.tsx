@@ -1,134 +1,233 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { JobInputForm } from "@/components/modules/job-match/job-input-form";
-import { MatchResult } from "@/components/modules/job-match/match-result";
-import { AtsSkeleton } from "@/components/modules/ats/ats-skeleton";
-import { JobMatchResult } from "@/types/job-match";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Target, Layers, CheckCircle2 } from "lucide-react";
-
-// Datos mock para simular la respuesta de comparación por IA
-const MOCK_JOB_MATCH: JobMatchResult = {
-  matchPercentage: 78,
-  jobTitle: "Senior Frontend Developer",
-  companyName: "Tech Corp",
-  summary: "Tienes una alta compatibilidad con el perfil técnico solicitado. Destacan tu dominio en React y TypeScript, aunque la vacante solicita conocimientos específicos en Next.js y metodologías de Testing.",
-  gaps: {
-    technicalSkills: {
-      matching: ["React", "TypeScript", "Tailwind CSS", "REST API", "Git"],
-      missing: ["Next.js (App Router)", "Jest / React Testing Library", "GraphQL"],
-    },
-    softSkills: {
-      matching: ["Trabajo en Equipo", "Comunicación Efectiva", "Autonomía"],
-      missing: ["Liderazgo Técnico", "Mentoría de Juniors"],
-    },
-  },
-  recommendations: [
-    "Resalta tus proyectos donde utilizaste Server Components o arquitecturas avanzadas en React.",
-    "Añade ejemplos o métricas concretas de pruebas unitarias si has trabajado con algún framework de testeo.",
-    "Ajusta el resumen de tu CV para enfatizar el rol de liderazgo o apoyo a miembros del equipo.",
-  ],
-};
+import React, { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { Briefcase, Sparkles, Target, Upload, FileText, CheckCircle2, XCircle, RefreshCw, Paperclip } from "lucide-react"
 
 export default function JobMatchPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<JobMatchResult | null>(null);
+  const [jobDescription, setJobDescription] = useState("")
+  const [selectedCv, setSelectedCv] = useState<File | null>(null)
+  const [useStoredCv, setUseStoredCv] = useState(true) // CV ya cargado en la plataforma
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [result, setResult] = useState<{
+    score: number
+    matchingSkills: string[]
+    missingSkills: string[]
+    summary: string
+  } | null>(null)
 
-  const handleAnalyze = (jobTitle: string, jobDescription: string) => {
-    setIsLoading(true);
-    setResult(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedCv(e.target.files[0])
+      setUseStoredCv(false)
+    }
+  }
 
-    // Simulación de llamado al backend con IA (2.5 segundos)
+  const handleMatch = () => {
+    if (!jobDescription.trim()) return
+    setIsAnalyzing(true)
+
     setTimeout(() => {
       setResult({
-        ...MOCK_JOB_MATCH,
-        jobTitle: jobTitle || MOCK_JOB_MATCH.jobTitle,
-      });
-      setIsLoading(false);
-    }, 2500);
-  };
+        score: 85,
+        matchingSkills: ["React / Next.js", "TypeScript", "Tailwind CSS", "Git"],
+        missingSkills: ["GraphQL", "Docker"],
+        summary: "Tu CV tiene una alta coincidencia con las demandas de la vacante. El perfil cubre las tecnologías principales solicitadas, destacando en el ecosistema Frontend."
+      })
+      setIsAnalyzing(false)
+    }, 1500)
+  }
+
+  const handleReset = () => {
+    setJobDescription("")
+    setSelectedCv(null)
+    setUseStoredCv(true)
+    setResult(null)
+  }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-10">
-      {/* Header Estilizado con Badge de IA */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/60 pb-6">
+    <div className="space-y-6">
+      {/* Encabezado */}
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary" className="bg-secondary text-primary hover:bg-secondary border-none px-3 py-1 gap-1.5 font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Comparación Inteligente de Perfil
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight">Coincidencia de Empleo</h1>
+            <Badge variant="secondary" className="gap-1 bg-blue-100 text-blue-700">
+              <Sparkles className="h-3 w-3" /> Job Match IA
             </Badge>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Job Match & Análisis de Brechas
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl">
-            Compara los requisitos de una oferta laboral específica contra tu Curriculum Vitae para descubrir qué habilidades cumples y cómo adaptar tu postulación.
+          <p className="text-sm text-muted-foreground mt-1">
+            Compara la descripción de una vacante directamente contra tu CV para evaluar tu compatibilidad.
           </p>
         </div>
       </div>
 
-      {/* Grid Inicial: Formulario + Guía Lateral */}
-      {!result && !isLoading && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-7 space-y-6">
-            <JobInputForm onSubmit={handleAnalyze} isLoading={isLoading} />
-          </div>
-
-          <div className="lg:col-span-5 space-y-4">
-            <Card className="border-border/60 shadow-sm bg-card/50 backdrop-blur">
-              <CardContent className="p-6 space-y-5">
-                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                  <Target className="w-5 h-5 text-primary" />
-                  Beneficios del Job Match
-                </h3>
-                
-                <ul className="space-y-4 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-primary shrink-0">
-                      <Layers className="w-4 h-4" />
-                    </div>
+      {!result ? (
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Columna 1: Selección/Carga de CV */}
+          <Card className="border-border/60 flex flex-col justify-between">
+            <div>
+              <CardHeader>
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  1. Tu Currículum (CV)
+                </CardTitle>
+                <CardDescription>
+                  Usa el CV activo en la plataforma o sube uno específico para esta prueba.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Opción 1: CV Pre-cargado */}
+                <div
+                  onClick={() => { setUseStoredCv(true); setSelectedCv(null); }}
+                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all flex items-center justify-between ${
+                    useStoredCv ? "border-blue-600 bg-blue-50/50" : "border-border/60 hover:bg-muted/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-blue-600" />
                     <div>
-                      <p className="font-medium text-foreground">Detección instantánea de Gaps</p>
-                      <p className="mt-0.5">Identifica exactamente qué palabras clave o tecnologías faltan en tu resumen antes de enviar tu solicitud.</p>
+                      <p className="text-sm font-medium">CV_Principal_Guardado.pdf</p>
+                      <p className="text-xs text-muted-foreground">CV analizado previamente en Diagnóstico ATS</p>
                     </div>
-                  </li>
-
-                  <li className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-primary shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Recomendaciones personalizadas</p>
-                      <p className="mt-0.5">Recibe sugerencias para reformular tus puntos de experiencia clave orientándolos al perfil buscado.</p>
-                    </div>
-                  </li>
-                </ul>
-
-                {/* Banner de marca */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white space-y-1 mt-2 shadow-sm">
-                  <p className="text-xs font-semibold">Tip para mayor precisión</p>
-                  <p className="text-[11px] opacity-90 leading-relaxed">
-                    Pega el texto completo de la vacante (incluyendo requerimientos deseables) para obtener un porcentaje de match más certero.
-                  </p>
+                  </div>
+                  {useStoredCv && <Badge className="bg-blue-600 text-white">Activo</Badge>}
                 </div>
+
+                {/* Opción 2: Subir un CV distinto */}
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="cv-upload-input"
+                  />
+                  <label
+                    htmlFor="cv-upload-input"
+                    className={`p-4 rounded-lg border-2 border-dashed cursor-pointer transition-all flex items-center justify-center gap-2 text-sm text-muted-foreground ${
+                      selectedCv ? "border-emerald-500 bg-emerald-50/50 text-emerald-700" : "hover:bg-muted/50 border-border/80"
+                    }`}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {selectedCv ? selectedCv.name : "Subir otro archivo de CV (.pdf, .docx)"}
+                  </label>
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+
+          {/* Columna 2: Vacante u Oferta */}
+          <Card className="border-border/60 flex flex-col justify-between">
+            <div>
+              <CardHeader>
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-blue-600" />
+                  2. Oferta de Trabajo
+                </CardTitle>
+                <CardDescription>
+                  Pega aquí los requisitos o el texto descriptivo de la vacante.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <textarea
+                  placeholder="Ejemplo: Requerimos Desarrollador Frontend con experiencia en React, TypeScript y Tailwind CSS..."
+                  value={jobDescription}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setJobDescription(e.target.value)}
+                  className="flex min-h-[160px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 resize-none"
+                />
+              </CardContent>
+            </div>
+            <div className="p-6 pt-0 flex justify-end">
+              <Button
+                onClick={handleMatch}
+                disabled={!jobDescription.trim() || isAnalyzing}
+                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Comparando CV y Vacante...
+                  </>
+                ) : (
+                  <>
+                    <Target className="h-4 w-4" />
+                    Calcular Compatibilidad
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      ) : (
+        /* Vista de Resultados */
+        <div className="space-y-6">
+          <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-xl text-white">Nivel de Compatibilidad</CardTitle>
+                <p className="text-xs text-blue-100 mt-1">
+                  Evaluación de {useStoredCv ? "CV Principal Guardado" : selectedCv?.name} vs Oferta
+                </p>
+              </div>
+              <Badge className="bg-white/20 text-white border-white/30 text-lg px-3 py-1">
+                {result.score}% Match
+              </Badge>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Progress value={result.score} className="h-2 bg-white/20" />
+              <p className="text-sm leading-relaxed text-white/90">{result.summary}</p>
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReset}
+                  className="gap-2 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Nueva Comparación
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="border-border/60">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold text-emerald-600 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" /> Habilidades del CV que coinciden
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {result.matchingSkills.map((skill, idx) => (
+                  <Badge key={idx} variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                    {skill}
+                  </Badge>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/60">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold text-rose-600 flex items-center gap-2">
+                  <XCircle className="h-4 w-4" /> Requisitos de la Vacante no encontrados
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {result.missingSkills.map((skill, idx) => (
+                  <Badge key={idx} variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
+                    {skill}
+                  </Badge>
+                ))}
               </CardContent>
             </Card>
           </div>
         </div>
       )}
-
-      {/* Cargador y Resultados */}
-      {isLoading && <AtsSkeleton />}
-
-      {!isLoading && result && (
-        <div className="space-y-6">
-          <JobInputForm onSubmit={handleAnalyze} isLoading={isLoading} />
-          <MatchResult result={result} />
-        </div>
-      )}
     </div>
-  );
+  )
 }
+  
