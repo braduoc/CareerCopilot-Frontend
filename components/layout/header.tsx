@@ -8,10 +8,9 @@ interface NavItem {
   href: string
 }
 
-// Asegúrate de que las rutas coincidan EXACTAMENTE con el nombre de tus carpetas en app/(dashboard)
 const navigationLinks: NavItem[] = [
   { name: "Panel", href: "/dashboard" },
-  { name: "Diagnóstico ATS", href: "/ats" },        // 👈 DEBE DECIR /ats (NO /diagnostico-ats)
+  { name: "Diagnóstico ATS", href: "/ats" },
   { name: "Coincidencia de empleo", href: "/job-match" },
   { name: "Historial", href: "/historial" },
 ]
@@ -20,11 +19,14 @@ export function Header() {
   const pathname = usePathname()
 
   return (
-    <header className="bg-purple-600 text-white shadow-md">
+    <header className="bg-purple-600 text-white shadow-md sticky top-0 z-50 w-full overflow-hidden">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        <div className="text-xl font-bold">Dashboard</div>
+        <Link href="/dashboard" className="text-xl font-bold shrink-0">
+          Dashboard
+        </Link>
         
-        <nav className="flex items-center gap-2">
+        {/* Navegación adaptable: con scroll horizontal suave en móviles si no cabe, y limpia en escritorio */}
+        <nav className="flex items-center gap-1 md:gap-2 overflow-x-auto no-scrollbar max-w-full">
           {navigationLinks.map((item: NavItem) => {
             const isActive = pathname === item.href
 
@@ -32,7 +34,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-2.5 py-1.5 rounded-md text-xs md:text-sm font-medium whitespace-nowrap transition-colors ${
                   isActive
                     ? "bg-white text-purple-700 shadow-sm"
                     : "text-white/80 hover:bg-white/10 hover:text-white"
