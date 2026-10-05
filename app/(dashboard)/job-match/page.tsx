@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Briefcase, Sparkles, Target, Upload, FileText, CheckCircle2, XCircle, RefreshCw, Paperclip } from "lucide-react"
+import { Briefcase, Target, Upload, FileText, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
 
 export default function JobMatchPage() {
   const [jobDescription, setJobDescription] = useState("")
@@ -51,15 +51,15 @@ export default function JobMatchPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 border-b border-border pb-6 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">Coincidencia de Empleo</h1>
-            <Badge variant="secondary" className="gap-1 bg-blue-100 text-blue-700">
-              <Sparkles className="h-3 w-3" /> Job Match IA
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Job Match</h1>
+            <Badge variant="outline" className="gap-1 border-primary/30 text-primary">
+              <Target className="h-3 w-3" /> Job Match
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1.5 text-sm text-muted-foreground">
             Compara la descripción de una vacante directamente contra tu CV para evaluar tu compatibilidad.
           </p>
         </div>
@@ -68,11 +68,11 @@ export default function JobMatchPage() {
       {!result ? (
         <div className="grid gap-6 md:grid-cols-2">
           {/* Columna 1: Selección/Carga de CV */}
-          <Card className="border-border/60 flex flex-col justify-between">
+          <Card className="flex flex-col justify-between">
             <div>
               <CardHeader>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-blue-600" />
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                  <FileText className="h-5 w-5 text-primary" />
                   1. Tu Currículum (CV)
                 </CardTitle>
                 <CardDescription>
@@ -83,18 +83,18 @@ export default function JobMatchPage() {
                 {/* Opción 1: CV Pre-cargado */}
                 <div
                   onClick={() => { setUseStoredCv(true); setSelectedCv(null); }}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all flex items-center justify-between ${
-                    useStoredCv ? "border-blue-600 bg-blue-50/50" : "border-border/60 hover:bg-muted/50"
+                  className={`flex items-center justify-between rounded-md border p-4 transition-colors ${
+                    useStoredCv ? "border-primary bg-accent" : "border-border hover:bg-secondary/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-blue-600" />
+                    <FileText className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="text-sm font-medium">CV_Principal_Guardado.pdf</p>
+                      <p className="text-sm font-medium text-foreground">CV_Principal_Guardado.pdf</p>
                       <p className="text-xs text-muted-foreground">CV analizado previamente en Diagnóstico ATS</p>
                     </div>
                   </div>
-                  {useStoredCv && <Badge className="bg-blue-600 text-white">Activo</Badge>}
+                  {useStoredCv && <Badge>Activo</Badge>}
                 </div>
 
                 {/* Opción 2: Subir un CV distinto */}
@@ -108,8 +108,8 @@ export default function JobMatchPage() {
                   />
                   <label
                     htmlFor="cv-upload-input"
-                    className={`p-4 rounded-lg border-2 border-dashed cursor-pointer transition-all flex items-center justify-center gap-2 text-sm text-muted-foreground ${
-                      selectedCv ? "border-emerald-500 bg-emerald-50/50 text-emerald-700" : "hover:bg-muted/50 border-border/80"
+                    className={`flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-sm transition-colors ${
+                      selectedCv ? "border-success/40 bg-success/5 text-success" : "border-border text-muted-foreground hover:bg-secondary/50"
                     }`}
                   >
                     <Upload className="h-4 w-4" />
@@ -121,11 +121,11 @@ export default function JobMatchPage() {
           </Card>
 
           {/* Columna 2: Vacante u Oferta */}
-          <Card className="border-border/60 flex flex-col justify-between">
+          <Card className="flex flex-col justify-between">
             <div>
               <CardHeader>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-blue-600" />
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                  <Briefcase className="h-5 w-5 text-primary" />
                   2. Oferta de Trabajo
                 </CardTitle>
                 <CardDescription>
@@ -137,15 +137,15 @@ export default function JobMatchPage() {
                   placeholder="Ejemplo: Requerimos Desarrollador Frontend con experiencia en React, TypeScript y Tailwind CSS..."
                   value={jobDescription}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setJobDescription(e.target.value)}
-                  className="flex min-h-[160px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 resize-none"
+                  className="flex min-h-[160px] w-full resize-none rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
                 />
               </CardContent>
             </div>
-            <div className="p-6 pt-0 flex justify-end">
+            <div className="flex justify-end p-6 pt-0">
               <Button
                 onClick={handleMatch}
                 disabled={!jobDescription.trim() || isAnalyzing}
-                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto"
+                className="w-full gap-2 md:w-auto"
               >
                 {isAnalyzing ? (
                   <>
@@ -165,60 +165,73 @@ export default function JobMatchPage() {
       ) : (
         /* Vista de Resultados */
         <div className="space-y-6">
-          <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div>
-                <CardTitle className="text-xl text-white">Nivel de Compatibilidad</CardTitle>
-                <p className="text-xs text-blue-100 mt-1">
-                  Evaluación de {useStoredCv ? "CV Principal Guardado" : selectedCv?.name} vs Oferta
-                </p>
+          <div className="rounded-md border border-ink-deep/10 bg-ink-deep p-6 text-ink-deep-foreground">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-ink-deep-foreground/60">
+                    Evaluación de {useStoredCv ? "CV Principal Guardado" : selectedCv?.name} vs. oferta
+                  </span>
+                </div>
+                <div className="flex items-end gap-3">
+                  <span className="font-mono text-5xl font-bold leading-none">{result.score}</span>
+                  <span className="pb-1 text-sm text-ink-deep-foreground/60">% de compatibilidad</span>
+                </div>
               </div>
-              <Badge className="bg-white/20 text-white border-white/30 text-lg px-3 py-1">
-                {result.score}% Match
-              </Badge>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Progress value={result.score} className="h-2 bg-white/20" />
-              <p className="text-sm leading-relaxed text-white/90">{result.summary}</p>
-              <div className="pt-2">
+
+              <div className="flex items-center gap-3">
+                <span
+                  className={`-rotate-3 rounded-sm border-2 px-2.5 py-1 text-sm font-bold tracking-wide ${
+                    result.score >= 60 ? "border-success text-success" : "border-destructive text-destructive"
+                  }`}
+                >
+                  {result.score >= 60 ? "COMPATIBLE" : "BAJA COINCIDENCIA"}
+                </span>
+
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="gap-2 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  className="gap-2 border-ink-deep-foreground/20 bg-transparent text-ink-deep-foreground hover:bg-white/5 hover:text-ink-deep-foreground"
                 >
                   <RefreshCw className="h-3.5 w-3.5" />
                   Nueva Comparación
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-border/60">
+            <div className="mt-6 space-y-3">
+              <Progress value={result.score} className="h-2 bg-ink-deep-foreground/15" />
+              <p className="max-w-3xl text-sm leading-relaxed text-ink-deep-foreground/75">{result.summary}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-emerald-600 flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-success">
                   <CheckCircle2 className="h-4 w-4" /> Habilidades del CV que coinciden
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
                 {result.matchingSkills.map((skill, idx) => (
-                  <Badge key={idx} variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                  <Badge key={idx} variant="success">
                     {skill}
                   </Badge>
                 ))}
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-rose-600 flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-destructive">
                   <XCircle className="h-4 w-4" /> Requisitos de la Vacante no encontrados
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
                 {result.missingSkills.map((skill, idx) => (
-                  <Badge key={idx} variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
+                  <Badge key={idx} variant="destructive">
                     {skill}
                   </Badge>
                 ))}
@@ -230,4 +243,3 @@ export default function JobMatchPage() {
     </div>
   )
 }
-  

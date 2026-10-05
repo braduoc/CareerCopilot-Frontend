@@ -2,7 +2,7 @@ import { JobMatchResult } from "@/types/job-match";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Sparkles, Target } from "lucide-react";
+import { CheckCircle2, XCircle, Target } from "lucide-react";
 
 interface MatchResultProps {
   result: JobMatchResult;
@@ -11,101 +11,87 @@ interface MatchResultProps {
 export function MatchResult({ result }: MatchResultProps) {
   const { matchPercentage, jobTitle, companyName, summary, gaps, recommendations } = result;
 
-  const getMatchBadgeStyle = (val: number) => {
-    if (val >= 75) {
-      return "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
-    }
-    if (val >= 50) {
-      return "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400";
-    }
-    return "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400";
-  };
+  const isMatch = matchPercentage >= 60;
 
   return (
     <div className="space-y-6">
       {/* Resumen Principal de Match */}
-      <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/50  rounded-t-xl">
+      <div className="rounded-md border border-ink-deep/10 bg-ink-deep p-6 text-ink-deep-foreground">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <CardTitle className="text-lg font-bold text-foreground">
-              {jobTitle || "Vacante Evaluada"}
-            </CardTitle>
-            {companyName && (
-              <p className="text-xs text-muted-foreground mt-0.5">{companyName}</p>
-            )}
-          </div>
-          <Badge 
-            variant="outline" 
-            className={`text-xs px-3 py-1 font-bold ${getMatchBadgeStyle(matchPercentage)}`}
-          >
-            {matchPercentage}% Match
-          </Badge>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-5">
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-semibold">
-              <span className="text-muted-foreground">Nivel de Compatibilidad</span>
-              <span className="text-violet-600 dark:text-violet-200">{matchPercentage}%</span>
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-ink-deep-foreground/60">
+                {jobTitle || "Vacante Evaluada"}
+                {companyName ? ` · ${companyName}` : ""}
+              </span>
             </div>
-            <Progress value={matchPercentage} className="h-2.5 bg-violet-100 dark:bg-violet-950 [&>div]:bg-violet-600" />
+            <div className="mt-3 flex items-end gap-3">
+              <span className="font-mono text-5xl font-bold leading-none">{matchPercentage}</span>
+              <span className="pb-1 text-sm text-ink-deep-foreground/60">% de compatibilidad</span>
+            </div>
           </div>
-          <p className="text-xs leading-relaxed text-muted-foreground bg-violet-50/30  p-3 rounded-xl border border-violet-100 dark:border-violet-900/30">
+
+          <span
+            className={`-rotate-3 rounded-sm border-2 px-2.5 py-1 text-sm font-bold tracking-wide ${
+              isMatch ? "border-success text-success" : "border-destructive text-destructive"
+            }`}
+          >
+            {isMatch ? "COMPATIBLE" : "BAJA COINCIDENCIA"}
+          </span>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          <Progress value={matchPercentage} className="h-2 bg-ink-deep-foreground/15" />
+          <p className="max-w-3xl text-sm leading-relaxed text-ink-deep-foreground/75">
             {summary}
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Análisis de Gaps (Habilidades Técnicas y Blandas) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Habilidades Técnicas */}
-        <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
-          <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/30 dark:bg-violet-950/10 rounded-t-xl">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-200 rounded-lg">
-                <Target className="w-4 h-4" />
+        <Card>
+          <CardHeader className="border-b border-border pb-3">
+            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <div className="rounded-sm border border-border bg-secondary p-1.5 text-primary">
+                <Target className="h-4 w-4" />
               </div>
               Hard Skills (Técnicas)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div>
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Coinciden
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <CheckCircle2 className="h-3.5 w-3.5 text-success" /> Coinciden
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {gaps.technicalSkills.matching.length > 0 ? (
                   gaps.technicalSkills.matching.map((skill, idx) => (
-                    <Badge 
-                      key={idx} 
-                      variant="outline" 
-                      className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium text-xs"
-                    >
+                    <Badge key={idx} variant="success">
                       {skill}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-xs text-muted-foreground italic">Sin coincidencias detectadas</span>
+                  <span className="text-sm italic text-muted-foreground">Sin coincidencias detectadas</span>
                 )}
               </div>
             </div>
 
-            <div className="pt-2 border-t border-violet-100 dark:border-violet-900/30">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <XCircle className="w-3.5 h-3.5 text-rose-500" /> Faltantes en tu CV
+            <div className="border-t border-border pt-2">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <XCircle className="h-3.5 w-3.5 text-destructive" /> Faltantes en tu CV
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {gaps.technicalSkills.missing.length > 0 ? (
                   gaps.technicalSkills.missing.map((skill, idx) => (
-                    <Badge 
-                      key={idx} 
-                      variant="outline" 
-                      className="border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium text-xs"
-                    >
+                    <Badge key={idx} variant="destructive">
                       {skill}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">¡Cubres todas las requeridas!</span>
+                  <span className="text-sm font-medium text-success">¡Cubres todas las requeridas!</span>
                 )}
               </div>
             </div>
@@ -113,54 +99,46 @@ export function MatchResult({ result }: MatchResultProps) {
         </Card>
 
         {/* Habilidades Blandas */}
-        <Card className="border-violet-200 dark:border-violet-900/50 shadow-xs">
-          <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-50/30 dark:bg-violet-950/10 rounded-t-xl">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-              <div className="p-1.5 bg-violet-100 dark:bg-violet-900/60 text-violet-600 dark:text-violet-200 rounded-lg">
-                <Target className="w-4 h-4" />
+        <Card>
+          <CardHeader className="border-b border-border pb-3">
+            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <div className="rounded-sm border border-border bg-secondary p-1.5 text-primary">
+                <Target className="h-4 w-4" />
               </div>
               Soft Skills & Cultura
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div>
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Coinciden
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <CheckCircle2 className="h-3.5 w-3.5 text-success" /> Coinciden
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {gaps.softSkills.matching.length > 0 ? (
                   gaps.softSkills.matching.map((skill, idx) => (
-                    <Badge 
-                      key={idx} 
-                      variant="outline" 
-                      className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium text-xs"
-                    >
+                    <Badge key={idx} variant="success">
                       {skill}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-xs text-muted-foreground italic">Sin coincidencias detectadas</span>
+                  <span className="text-sm italic text-muted-foreground">Sin coincidencias detectadas</span>
                 )}
               </div>
             </div>
 
-            <div className="pt-2 border-t border-violet-100 dark:border-violet-900/30">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <XCircle className="w-3.5 h-3.5 text-rose-500" /> Faltantes en tu CV
+            <div className="border-t border-border pt-2">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <XCircle className="h-3.5 w-3.5 text-destructive" /> Faltantes en tu CV
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {gaps.softSkills.missing.length > 0 ? (
                   gaps.softSkills.missing.map((skill, idx) => (
-                    <Badge 
-                      key={idx} 
-                      variant="outline" 
-                      className="border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium text-xs"
-                    >
+                    <Badge key={idx} variant="destructive">
                       {skill}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">¡Cubres todas las requeridas!</span>
+                  <span className="text-sm font-medium text-success">¡Cubres todas las requeridas!</span>
                 )}
               </div>
             </div>
@@ -169,16 +147,16 @@ export function MatchResult({ result }: MatchResultProps) {
       </div>
 
       {/* Recomendaciones Estratégicas */}
-      <Card className="border-violet-200 dark:border-violet-900/50 bg-violet-50/20 dark:bg-violet-950/10 shadow-xs">
-        <CardHeader className="pb-3 border-b border-violet-100 dark:border-violet-900/30 bg-violet-100/40 dark:bg-violet-900/20 rounded-t-xl">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-violet-700 dark:text-violet-200">
-            <Sparkles className="w-4 h-4 text-violet-600 dark:text-violet-200" /> Recomendaciones para Personalizar tu Postulación
+      <Card>
+        <CardHeader className="border-b border-border bg-accent/40 pb-3">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Target className="h-4 w-4 text-primary" /> Recomendaciones para Personalizar tu Postulación
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 space-y-2.5">
+        <CardContent className="space-y-2.5 p-4">
           {recommendations.map((rec, idx) => (
-            <div key={idx} className="flex gap-2.5 items-start text-xs text-muted-foreground pb-2 border-b border-violet-100/60 dark:border-violet-900/20 last:border-none last:pb-0">
-              <span className="text-violet-600 dark:text-violet-200 font-bold">•</span>
+            <div key={idx} className="flex items-start gap-2.5 border-b border-border pb-2 text-sm text-muted-foreground last:border-none last:pb-0">
+              <span className="font-bold text-primary">•</span>
               <p className="leading-relaxed">{rec}</p>
             </div>
           ))}

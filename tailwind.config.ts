@@ -4,13 +4,16 @@ const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./**/*.{ts,tsx}"],
   theme: {
     extend: {
-      backgroundImage: {
-        "brand-gradient": "linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #D946EF 100%)",
+      fontFamily: {
+        sans: ["var(--font-plex-sans)", "ui-sans-serif", "system-ui"],
+        mono: ["var(--font-space-mono)", "ui-monospace", "SFMono-Regular"],
       },
       colors: {
         primary: "hsl(var(--primary) / <alpha-value>)",
         secondary: "hsl(var(--secondary) / <alpha-value>)",
         accent: "hsl(var(--accent) / <alpha-value>)",
+        success: "hsl(var(--success) / <alpha-value>)",
+        "ink-deep": "hsl(var(--ink-deep) / <alpha-value>)",
       },
     },
   },

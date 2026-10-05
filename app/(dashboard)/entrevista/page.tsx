@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Bot, Sparkles, ArrowLeft, Send, CheckCircle2, AlertCircle } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { MessageSquare, History, ArrowLeft, Send, CheckCircle2, AlertCircle } from "lucide-react"
 
 function EntrevistaContent() {
   const searchParams = useSearchParams()
@@ -15,19 +16,16 @@ function EntrevistaContent() {
   // Si no hay ID, muestra la pantalla intuitiva que redirige al historial
   if (!historyId) {
     return (
-      <Card className="border-border/60 text-center py-12 px-4 shadow-sm">
-        <CardContent className="space-y-4 max-w-md mx-auto">
-          <div className="p-3 bg-amber-50 text-amber-600 rounded-full w-fit mx-auto">
-            <AlertCircle className="h-8 w-8" />
+      <Card className="px-4 py-12 text-center">
+        <CardContent className="mx-auto max-w-md space-y-4">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-sm border border-primary/40 bg-primary/10 text-primary">
+            <AlertCircle className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold">No has seleccionado ningún análisis</h2>
+          <h2 className="text-xl font-bold text-foreground">No has seleccionado ningún análisis</h2>
           <p className="text-sm text-muted-foreground">
             Para iniciar una simulación de entrevista personalizada, selecciona primero un registro desde tu historial.
           </p>
-          <Button
-            onClick={() => router.push("/historial")}
-            className="gap-2 bg-purple-600 hover:bg-purple-700 text-white"
-          >
+          <Button onClick={() => router.push("/historial")} className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Ir al Historial de Análisis
           </Button>
@@ -42,57 +40,54 @@ function EntrevistaContent() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight">Simulador de Entrevista IA</h1>
-            <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700">
-              <Sparkles className="h-3 w-3" /> Precargado desde Historial
+            <Badge variant="outline" className="gap-1.5 border-primary/30 text-primary">
+              <History className="h-3 w-3" /> Precargado desde Historial
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sesión activa para el registro ID: <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-purple-700">{historyId}</code>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Sesión activa para el registro ID:{" "}
+            <code className="rounded-sm bg-secondary px-1.5 py-0.5 font-mono text-primary">{historyId}</code>
           </p>
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={() => router.push("/historial")}
-          className="gap-1.5 text-xs self-start md:self-auto"
+          className="gap-1.5 self-start md:self-auto"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Volver al Historial
         </Button>
       </div>
 
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader className="border-b border-border/40 bg-muted/20">
+      <Card>
+        <CardHeader className="border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-600 text-white rounded-lg">
-              <Bot className="h-5 w-5" />
+            <div className="rounded-sm border border-border bg-secondary p-2 text-primary">
+              <MessageSquare className="h-5 w-5" />
             </div>
             <div>
               <CardTitle className="text-base">Reclutador Virtual IA</CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription>
                 Preguntas basadas en tu CV y la vacante del análisis seleccionado
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6 space-y-4">
-          <div className="p-4 rounded-lg bg-purple-50/60 border border-purple-100 text-sm space-y-2">
-            <p className="font-semibold text-purple-900 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-purple-600" />
+        <CardContent className="space-y-4 p-6">
+          <div className="space-y-2 rounded-sm border border-success/30 bg-success/5 p-4 text-sm">
+            <p className="flex items-center gap-2 font-semibold text-foreground">
+              <CheckCircle2 className="h-4 w-4 text-success" />
               ¡Contexto cargado con éxito!
             </p>
-            <p className="text-purple-800 leading-relaxed">
-              "Hola. He revisado tu diagnóstico y la vacante correspondiente. Vamos a practicar las preguntas clave para evaluar tus fortalezas en Frontend y preparar tus mejores respuestas. ¿Estás listo para comenzar con la primera pregunta?"
+            <p className="leading-relaxed text-foreground/80">
+              &ldquo;Hola. He revisado tu diagnóstico y la vacante correspondiente. Vamos a practicar las preguntas clave para evaluar tus fortalezas en Frontend y preparar tus mejores respuestas. ¿Estás listo para comenzar con la primera pregunta?&rdquo;
             </p>
           </div>
 
           <div className="flex gap-2 pt-4">
-            <input
-              type="text"
-              placeholder="Escribe tu respuesta aquí..."
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600"
-            />
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white gap-2">
+            <Input type="text" placeholder="Escribe tu respuesta aquí..." />
+            <Button className="gap-2">
               <Send className="h-4 w-4" />
               Responder
             </Button>

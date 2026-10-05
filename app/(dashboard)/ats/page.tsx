@@ -1,116 +1,110 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { FileSearch, Sparkles, ShieldCheck, Zap } from "lucide-react"
-
-// Componentes del módulo ATS
-import { CvUploader } from "@/components/modules/ats/cv-uploader"
-import { AtsScoreCard } from "@/components/modules/ats/ats-score-card"
-import { AtsSkeleton } from "@/components/modules/ats/ats-skeleton"
-
-// Importación del hook
-import { useATS } from "@/hooks/use-ats"
-import { ATSDiagnostic } from "@/types/ats"
+import { CvUploader } from "@/components/modules/ats/cv-uploader";
+import { AtsScoreCard } from "@/components/modules/ats/ats-score-card";
+import { AtsSkeleton } from "@/components/modules/ats/ats-skeleton";
+import { useAts } from "@/hooks/use-ats";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { FileCheck2, FileSearch, ShieldCheck, Zap } from "lucide-react";
 
 export default function AtsPage() {
-  const { loading, result, uploadCV } = useATS()
+  const { diagnostic, isLoading, error, analyzeCv, resetDiagnostic } = useAts();
 
-  // Adaptador seguro para CvUploader
-  const UploaderComponent = CvUploader as any
-
-  // Mapeo/Adaptación de ATSAnalysisResult a ATSDiagnostic para AtsScoreCard
-  const diagnosticData: ATSDiagnostic | null = result
-    ? {
-        score: (result as any).score ?? 0,
-        summary: (result as any).summary ?? "",
-        parsedText: (result as any).parsedText ?? "",
-        sections: (result as any).sections ?? {
-          contactInfo: false,
-          workExperience: false,
-          education: false,
-          skills: false,
-        },
-        strengths: (result as any).strengths ?? [],
-        improvements: (result as any).improvements ?? [],
-        missingKeywords: (result as any).missingKeywords ?? [],
-      }
-    : null
+  const handleFileSelect = async (file: File) => {
+    try {
+      await analyzeCv(file);
+    } catch (err) {
+      console.error("Error al procesar el archivo:", err);
+    }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-6xl mx-auto pb-10">
       {/* Encabezado */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">Diagnóstico ATS</h1>
-            <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700">
-              <Sparkles className="h-3 w-3" /> IA Powered
+          <div className="flex items-center gap-2 mb-2">
+            <Badge variant="outline" className="gap-1.5 font-medium text-primary border-primary/30">
+              <FileCheck2 className="w-3.5 h-3.5 text-primary" />
+              Algoritmo de Escaneo ATS v2.4
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Optimiza tu currículum para superar los filtros automáticos de selección.
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Diagnóstico y Optimización ATS
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl">
+            Audita el nivel de legibilidad de tu Curriculum Vitae frente a los reclutadores automáticos antes de aplicar a vacantes clave.
           </p>
         </div>
       </div>
 
-      {/* Tarjetas Informativas */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-purple-50/50 border-purple-100">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-purple-900">Formato Compatible</CardTitle>
-            <ShieldCheck className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-purple-700">
-              Verifica que la estructura sea leíble por los sistemas ATS.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-indigo-50/50 border-indigo-100">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-indigo-900">Palabras Clave</CardTitle>
-            <Zap className="h-4 w-4 text-indigo-600" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-indigo-700">
-              Detecta términos técnicos indispensables según la industria.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-purple-50/50 border-purple-100">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-purple-900">Puntaje de Legibilidad</CardTitle>
-            <FileSearch className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-purple-700">
-              Obtén una calificación porcentual sobre el impacto de tu CV.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Subir CV */}
-      {!diagnosticData && !loading && (
-        <UploaderComponent
-          onUpload={uploadCV}
-          onUploadCV={uploadCV}
-          onFileSelect={uploadCV}
-          onAnalyze={uploadCV}
-          isLoading={loading}
-        />
+      {/* Alerta de Error */}
+      {error && (
+        <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-md text-sm text-destructive flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-destructive" />
+          {error}
+        </div>
       )}
 
-      {/* Skeleton mientras analiza */}
-      {loading && <AtsSkeleton />}
+      {/* Vista Inicial: Carga + Banner de Características */}
+      {!diagnostic && !isLoading && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Componente Uploader (7 cols) */}
+          <div className="lg:col-span-7 space-y-4">
+            <CvUploader onFileUpload={handleFileSelect} isLoading={isLoading} />
+          </div>
 
-      {/* Resultado del diagnóstico */}
-      {diagnosticData && !loading && (
-        <AtsScoreCard diagnostic={diagnosticData} />
+          {/* Tarjeta de Beneficios / Guía Visual (5 cols) */}
+          <div className="lg:col-span-5 space-y-4">
+            <Card>
+              <CardContent className="p-6 space-y-5">
+                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <FileSearch className="w-5 h-5 text-primary" />
+                  ¿Qué analizamos en tu CV?
+                </h3>
+
+                <ul className="space-y-4 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-3">
+                    <div className="p-2 rounded-sm border border-border bg-secondary text-primary shrink-0">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Estructura y Encabezados Standard</p>
+                      <p className="mt-0.5">Verificamos que secciones clave como Educación y Experiencia sean reconocidas por los parsers.</p>
+                    </div>
+                  </li>
+
+                  <li className="flex items-start gap-3">
+                    <div className="p-2 rounded-sm border border-border bg-secondary text-primary shrink-0">
+                      <Zap className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Extracción de Palabras Clave</p>
+                      <p className="mt-0.5">Comparamos tus hard & soft skills con la densidad léxica que buscan los reclutadores.</p>
+                    </div>
+                  </li>
+                </ul>
+
+                {/* Nota de optimización */}
+                <div className="border-l-2 border-primary bg-accent p-4 space-y-1 mt-2">
+                  <p className="text-sm font-semibold text-foreground">Pro tip de optimización</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Evita usar tablas complejas o diseños multicolumna en tu PDF original para maximizar el puntaje de lectura.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Renderizado Condicional: Skeleton vs Resultado */}
+      {isLoading && <AtsSkeleton />}
+
+      {!isLoading && diagnostic && (
+        <AtsScoreCard diagnostic={diagnostic} onReset={resetDiagnostic} />
       )}
     </div>
-  )
+  );
 }

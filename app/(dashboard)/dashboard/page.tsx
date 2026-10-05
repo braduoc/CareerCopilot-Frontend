@@ -1,75 +1,82 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileSearch, Target, History, ArrowRight } from "lucide-react"
+import Link from "next/link";
+import { FileCheck2, Target, History, ArrowUpRight } from "lucide-react";
 
 export default function DashboardPage() {
   const tools = [
     {
-      title: "Diagnóstico ATS", // Limpiado el "(DS)"
-      description: "Analiza la legibilidad y el impacto de tu CV.",
+      index: "01",
+      title: "Diagnóstico ATS",
+      description:
+        "Sube tu CV y revisa cómo lo lee un sistema de seguimiento de candidatos antes de postular.",
       href: "/ats",
-      icon: FileSearch,
+      icon: FileCheck2,
     },
     {
-      title: "Coincidencia de empleo", // Mantiene consistencia exacta con la Navbar
-      description: "Compara tu perfil con los requisitos de una vacante.",
+      index: "02",
+      title: "Job Match",
+      description:
+        "Compara tu perfil contra una vacante específica y detecta qué palabras clave te faltan.",
       href: "/job-match",
       icon: Target,
     },
     {
+      index: "03",
       title: "Historial",
-      description: "Consulta tus análisis anteriores e inicia entrevistas o correos.",
+      description:
+        "Revisa tus fichas anteriores e inicia desde ahí una entrevista o un email de postulación.",
       href: "/historial",
       icon: History,
     },
-  ]
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Bánner principal */}
-      <div className="rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white shadow-md">
-        <span className="text-xs font-semibold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">
-          Tu próxima oportunidad empieza aquí
-        </span>
-        <h1 className="text-3xl font-bold mt-3">Prepara una postulación más sólida.</h1>
-        <p className="text-purple-100 mt-1 max-w-2xl text-sm">
-          Revisa tu CV, entiende cada vacante y llega mejor preparado a tus entrevistas con el respaldo de IA.
+    <div className="space-y-10">
+      {/* Portada del expediente */}
+      <div className="rounded-md border border-ink-deep/10 bg-ink-deep px-7 py-8 text-ink-deep-foreground">
+        <p className="text-sm text-ink-deep-foreground/55">Expediente de postulación</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          Prepara una postulación más sólida.
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-deep-foreground/70">
+          Revisa tu CV, entiende cada vacante y llega mejor preparado a tus
+          entrevistas. Cada diagnóstico queda guardado en tu historial.
         </p>
       </div>
 
-      {/* Tarjetas de acceso directo */}
+      {/* Fichas de acceso */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-1">¿Qué quieres preparar hoy?</h2>
-        <p className="text-muted-foreground text-sm mb-4">
-          Accede a tus herramientas de preparación laboral desde un solo lugar.
+        <h2 className="text-xl font-semibold tracking-tight">¿Qué quieres preparar hoy?</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sigue el orden si es tu primera vez: diagnóstico, comparación con la vacante y luego revisa tu historial.
         </p>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="mt-5 divide-y divide-border border-y border-border">
           {tools.map((tool) => {
-            const Icon = tool.icon
+            const Icon = tool.icon;
             return (
-              <Link key={tool.href} href={tool.href} className="group">
-                <Card className="h-full hover:shadow-md transition-all group-hover:border-primary/50">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="p-1 rounded-full group-hover:bg-primary/10 text-muted-foreground group-hover:text-primary transition-colors">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardTitle className="text-lg font-semibold">{tool.title}</CardTitle>
-                    <CardDescription className="mt-1 text-xs">{tool.description}</CardDescription>
-                  </CardContent>
-                </Card>
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="group flex items-center gap-5 py-5 transition-colors hover:bg-card/60"
+              >
+                <span className="font-mono text-sm text-muted-foreground/70">
+                  {tool.index}
+                </span>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-border bg-card text-primary">
+                  <Icon className="h-4.5 w-4.5" />
+                </span>
+                <span className="flex-1">
+                  <span className="block font-semibold text-foreground">{tool.title}</span>
+                  <span className="block text-sm text-muted-foreground">{tool.description}</span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
               </Link>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
+  );
 }

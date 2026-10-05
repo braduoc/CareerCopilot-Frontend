@@ -8,7 +8,7 @@ export function AtsSkeleton() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-24 rounded-sm" />
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
           <Skeleton className="h-3 w-full" />
@@ -23,10 +23,10 @@ export function AtsSkeleton() {
           <Skeleton className="h-5 w-56" />
         </CardHeader>
         <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-sm" />
+          <Skeleton className="h-10 w-full rounded-sm" />
+          <Skeleton className="h-10 w-full rounded-sm" />
+          <Skeleton className="h-10 w-full rounded-sm" />
         </CardContent>
       </Card>
 
@@ -59,10 +59,10 @@ export function AtsSkeleton() {
             <Skeleton className="h-5 w-40" />
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2 pt-1">
-            <Skeleton className="h-6 w-16 rounded-full" />
-            <Skeleton className="h-6 w-20 rounded-full" />
-            <Skeleton className="h-6 w-14 rounded-full" />
-            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-16 rounded-sm" />
+            <Skeleton className="h-6 w-20 rounded-sm" />
+            <Skeleton className="h-6 w-14 rounded-sm" />
+            <Skeleton className="h-6 w-24 rounded-sm" />
           </CardContent>
         </Card>
       </div>

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_ROUTES, STORAGE_KEYS } from "@/lib/constants";
-import { ArrowRight, ArrowLeft, Lock, Mail, User } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lock, Mail, User, Stamp } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -83,22 +83,25 @@ const handleRegister = async (e: FormEvent) => {
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground lg:grid lg:grid-cols-[0.9fr_1.1fr]">
-      <aside className="relative flex h-[40vh] min-h-[250px] max-h-[400px] flex-col justify-center overflow-hidden bg-violet-950 p-5 text-white sm:h-[42vh] sm:min-h-[280px] sm:p-8 lg:h-auto lg:min-h-screen lg:p-10 xl:p-14">
+      <aside className="relative flex h-[40vh] min-h-[250px] max-h-[400px] flex-col justify-center overflow-hidden bg-ink-deep p-5 text-ink-deep-foreground sm:h-[42vh] sm:min-h-[280px] sm:p-8 lg:h-auto lg:min-h-screen lg:p-10 xl:p-14">
         <div className="relative max-w-sm">
-          <h1 className="text-3xl font-semibold leading-[1.08] tracking-tight sm:text-4xl xl:text-5xl">
+          <span className="mb-5 flex h-9 w-9 items-center justify-center rounded-sm border border-primary/50 bg-primary/15 text-primary">
+            <Stamp className="h-4.5 w-4.5" />
+          </span>
+          <h1 className="text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl xl:text-5xl">
             Tu próximo paso empieza aquí.
           </h1>
-          <p className="mt-3 max-w-xs text-sm leading-6 text-violet-100/70 sm:mt-4">
-            Crea tu espacio profesional.
+          <p className="mt-3 max-w-xs text-sm leading-6 text-ink-deep-foreground/65 sm:mt-4">
+            Abre tu expediente de postulación.
           </p>
         </div>
       </aside>
 
-      <main className="relative z-10 -mt-10 flex min-h-[60vh] flex-col rounded-t-[1.5rem] bg-card px-4 py-5 shadow-[0_-12px_30px_rgba(124,58,237,0.14)] sm:-mt-12 sm:rounded-t-[2rem] sm:px-10 sm:py-8 lg:z-auto lg:mt-0 lg:min-h-screen lg:rounded-none lg:bg-transparent lg:px-16 lg:py-8 lg:shadow-none xl:px-24">
+      <main className="relative z-10 -mt-6 flex min-h-[60vh] flex-col rounded-t-md border-t border-border bg-card px-4 py-5 sm:-mt-8 sm:px-10 sm:py-8 lg:z-auto lg:mt-0 lg:min-h-screen lg:rounded-none lg:border-t-0 lg:bg-transparent lg:px-16 lg:py-8 xl:px-24">
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver a la landing
@@ -107,7 +110,7 @@ const handleRegister = async (e: FormEvent) => {
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-start py-5 sm:py-10 lg:justify-center lg:py-12">
           <div className="mb-6 sm:mb-8 lg:mb-10">
-            <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Crea tu cuenta
             </h2>
             <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
@@ -117,7 +120,7 @@ const handleRegister = async (e: FormEvent) => {
 
           <form onSubmit={handleRegister} className="space-y-4 sm:space-y-5">
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-foreground">
+              <label className="block text-sm font-bold text-foreground">
                 Nombre completo
               </label>
               <div className="relative">
@@ -125,7 +128,7 @@ const handleRegister = async (e: FormEvent) => {
                 <Input
                   type="text"
                   placeholder="Ej. Alex Morgan"
-                  className="h-11 rounded-xl border-border bg-card pl-11 text-sm shadow-sm focus-visible:ring-primary sm:h-12"
+                  className="h-11 bg-card pl-11 text-sm focus-visible:ring-primary sm:h-12"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -135,7 +138,7 @@ const handleRegister = async (e: FormEvent) => {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-foreground">
+              <label className="block text-sm font-bold text-foreground">
                 Correo electrónico
               </label>
               <div className="relative">
@@ -143,7 +146,7 @@ const handleRegister = async (e: FormEvent) => {
                 <Input
                   type="email"
                   placeholder="tu@correo.com"
-                  className="h-11 rounded-xl border-border bg-card pl-11 text-sm shadow-sm focus-visible:ring-primary sm:h-12"
+                  className="h-11 bg-card pl-11 text-sm focus-visible:ring-primary sm:h-12"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -154,10 +157,10 @@ const handleRegister = async (e: FormEvent) => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
-                <label className="block text-xs font-bold text-foreground">
+                <label className="block text-sm font-bold text-foreground">
                   Contraseña
                 </label>
-                <span className="text-right text-[11px] font-medium text-muted-foreground">
+                <span className="text-right text-xs font-medium text-muted-foreground">
                   Mínimo 8 caracteres
                 </span>
               </div>
@@ -166,7 +169,7 @@ const handleRegister = async (e: FormEvent) => {
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="h-11 rounded-xl border-border bg-card pl-11 text-sm shadow-sm focus-visible:ring-primary sm:h-12"
+                  className="h-11 bg-card pl-11 text-sm focus-visible:ring-primary sm:h-12"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -178,7 +181,7 @@ const handleRegister = async (e: FormEvent) => {
 
             <Button
               type="submit"
-              className="h-11 w-full gap-2 rounded-xl bg-primary text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 sm:h-12"
+              className="h-11 w-full gap-2 text-sm sm:h-12"
               disabled={isLoading || !email.trim() || !fullName.trim() || !password.trim()}
             >
               {isLoading ? "Creando cuenta..." : "Registrarme"}
@@ -186,7 +189,7 @@ const handleRegister = async (e: FormEvent) => {
             </Button>
           </form>
 
-          <div className="mt-6 border-t border-border pt-5 text-center text-xs text-muted-foreground sm:mt-8 sm:pt-6">
+          <div className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground sm:mt-8 sm:pt-6">
             ¿Ya tienes una cuenta?{" "}
             <Link
               href={APP_ROUTES.LOGIN}
@@ -196,7 +199,6 @@ const handleRegister = async (e: FormEvent) => {
             </Link>
           </div>
         </div>
-
       </main>
     </div>
   );

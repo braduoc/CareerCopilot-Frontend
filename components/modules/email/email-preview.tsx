@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmailGenerateResult } from "@/types/email";
-import { Copy, Check, MailCheck } from "lucide-react";
+import { Copy, Check, Mail } from "lucide-react";
 
 interface EmailPreviewProps {
   result: EmailGenerateResult;
@@ -21,20 +21,20 @@ export function EmailPreview({ result }: EmailPreviewProps) {
   };
 
   return (
-    <Card className="border-violet-200 dark:border-violet-900/50 shadow-md">
-      <CardHeader className="bg-muted/50 border-b border-border">
+    <Card>
+      <CardHeader className="border-b border-border">
         <CardTitle className="flex items-center justify-between text-base">
           <span className="flex items-center gap-2 text-foreground">
-            <MailCheck className="w-5 h-5 text-primary" />
+            <Mail className="h-4 w-4 text-primary" />
             Borrador Generado
           </span>
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-xs"
+            className="gap-2"
             onClick={() => copyToClipboard(`Asunto: ${result.subject}\n\n${result.body}`, setCopiedBody)}
           >
-            {copiedBody ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedBody ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
             {copiedBody ? "¡Copiado Todo!" : "Copiar Todo"}
           </Button>
         </CardTitle>
@@ -43,8 +43,8 @@ export function EmailPreview({ result }: EmailPreviewProps) {
         {/* Asunto */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Asunto del Correo
+            <label className="text-sm font-semibold text-muted-foreground">
+              Asunto del correo
             </label>
             <Button
               variant="ghost"
@@ -52,20 +52,20 @@ export function EmailPreview({ result }: EmailPreviewProps) {
               className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
               onClick={() => copyToClipboard(result.subject, setCopiedSubject)}
             >
-              {copiedSubject ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+              {copiedSubject ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
-          <div className="p-3 bg-muted rounded-xl text-sm font-medium text-foreground border border-border">
+          <div className="rounded-sm border border-border bg-secondary/50 p-3 text-sm font-medium text-foreground">
             {result.subject}
           </div>
         </div>
 
         {/* Cuerpo */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Cuerpo del Mensaje
+          <label className="text-sm font-semibold text-muted-foreground">
+            Cuerpo del mensaje
           </label>
-          <div className="p-4 bg-muted/50 rounded-xl text-sm text-foreground border border-border whitespace-pre-wrap leading-relaxed font-sans">
+          <div className="whitespace-pre-wrap rounded-sm border border-border bg-card p-4 font-sans text-sm leading-relaxed text-foreground">
             {result.body}
           </div>
         </div>

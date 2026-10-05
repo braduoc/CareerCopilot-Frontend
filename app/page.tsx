@@ -1,324 +1,308 @@
 import Link from "next/link";
-import { 
-  ArrowRight, 
-  Bot, 
-  FileText, 
-  Target, 
-  Sparkles, 
-  CheckCircle2, 
-  HelpCircle,
-  BrainCircuit,
+import {
+  Stamp,
+  FileCheck2,
+  Target,
+  MessageSquare,
+  Mail,
   Check,
-  AlertCircle
+  ArrowUpRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
+const modules = [
+  {
+    index: "01",
+    title: "Diagnóstico ATS",
+    description:
+      "Analiza el formato, la densidad de secciones y la legibilidad técnica de tu CV antes de enviarlo, para que el sistema de seguimiento de candidatos lo procese sin perder información.",
+    points: [
+      "Evaluación de formato y estructura de secciones",
+      "Detección de secciones omitidas o mal etiquetadas",
+      "Puntuación global del documento",
+    ],
+    icon: FileCheck2,
+    accent: "border-primary text-primary",
+  },
+  {
+    index: "02",
+    title: "Job Match",
+    description:
+      "Compara tu currículum directamente contra el texto de una vacante. La IA cruza los requisitos exigidos con tu experiencia y te muestra qué te falta agregar.",
+    points: [
+      "Extracción automática de requisitos y habilidades",
+      "Porcentaje de coincidencia con la vacante",
+      "Palabras clave encontradas y faltantes",
+    ],
+    icon: Target,
+    accent: "border-success text-success",
+  },
+  {
+    index: "03",
+    title: "Entrevista IA",
+    description:
+      "Practica con preguntas generadas a partir del puesto y tu CV. Cada respuesta se evalúa con la metodología STAR, con sugerencias concretas para la siguiente ronda.",
+    points: [
+      "Preguntas adaptadas al rol y a tu Job Match",
+      "Evaluación de Situación, Tarea, Acción y Resultado",
+      "Disponible en el plan Premium",
+    ],
+    icon: MessageSquare,
+    accent: "border-foreground text-foreground",
+  },
+  {
+    index: "04",
+    title: "Generador de email",
+    description:
+      "A partir de un Job Match ya calculado, redacta un correo de postulación que menciona tu experiencia relevante y las palabras clave de la oferta.",
+    points: [
+      "Redacción basada en tu comparación de vacante",
+      "Edición directa antes de enviarlo",
+      "Guardado junto al resto de la ficha",
+    ],
+    icon: Mail,
+    accent: "border-primary text-primary",
+  },
+];
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-violet-600/20 selection:text-violet-600">
-      {/* Fondo con brillo difuminado sutil */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-violet-200/10 blur-3xl" />
-        <div className="absolute top-1/2 -left-40 h-96 w-96 rounded-full bg-violet-200/5 blur-3xl" />
-      </div>
-
-      {/* Header / Navbar superior */}
-      <header className="sticky top-0 z-50 w-full border-b border-violet-100 dark:border-violet-900/30 bg-background/80 backdrop-blur-md">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full bg-ink-deep text-ink-deep-foreground">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-foreground">
-            <span className="rounded-xl bg-violet-600 p-2 text-white shadow-xs">
-              <Bot className="h-5 w-5" />
+          <Link href="/" className="flex items-center gap-2.5 font-semibold">
+            <span className="flex h-8 w-8 items-center justify-center rounded-sm border border-primary/50 bg-primary/15 text-primary">
+              <Stamp className="h-4 w-4" />
             </span>
-            <span className="tracking-tight text-lg">CareerCopilot</span>
+            <span className="tracking-tight">CareerCopilot</span>
           </Link>
-          
-          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-muted-foreground">
-            <a href="#como-funciona" className="hover:text-violet-600 transition-colors">¿Cómo funciona?</a>
-            <a href="#modulos" className="hover:text-violet-600 transition-colors">Módulos</a>
-            <a href="#faq" className="hover:text-violet-600 transition-colors">Preguntas Frecuentes</a>
+
+          <nav className="hidden items-center gap-7 text-sm text-ink-deep-foreground/65 md:flex">
+            <a href="#modulos" className="border-b-2 border-transparent pb-1 transition-colors hover:border-primary hover:text-ink-deep-foreground">
+              Módulos
+            </a>
+            <a href="#como-funciona" className="border-b-2 border-transparent pb-1 transition-colors hover:border-primary hover:text-ink-deep-foreground">
+              Cómo funciona
+            </a>
+            <a href="#faq" className="border-b-2 border-transparent pb-1 transition-colors hover:border-primary hover:text-ink-deep-foreground">
+              Preguntas frecuentes
+            </a>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/login" 
-              className="text-xs font-semibold text-muted-foreground hover:text-violet-600 transition-colors px-3 py-2"
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="px-3 py-2 text-sm font-medium text-ink-deep-foreground/70 transition-colors hover:text-ink-deep-foreground"
             >
               Iniciar sesión
             </Link>
             <Link href="/register">
-              <Button size="sm" className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-xs shadow-xs">
-                Empezar Gratis
-              </Button>
+              <Button size="sm">Empezar gratis</Button>
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 lg:px-10">
-        {/* Hero Section */}
-        <section className="flex flex-col items-center text-center py-20 lg:py-28 max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 dark:border-violet-900/60 bg-violet-50/50 px-3.5 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-200">
-            <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-200" />
-            Tu copiloto de empleabilidad con IA
-          </div>
-          
-          <h1 className="text-4xl font-extrabold leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Optimiza tu CV para el{" "}
-            <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-              ATS exacto de cada empresa
-            </span>
-          </h1>
-          
-          <p className="text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl">
-            Supera los filtros automáticos de selección, detecta las palabras clave que le faltan a tu perfil y practica entrevistas reales adaptadas al puesto exacto al que estás postulando.
-          </p>
-
-          <div className="pt-2">
-            <Link href="/register">
-              <Button size="lg" className="gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow-md hover:shadow-violet-600/20 text-sm h-12 px-8">
-                Escanear mi CV Gratis <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap justify-center items-center gap-6 pt-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Sin tarjeta de crédito</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Compatible con Workday, Taleo, Greenhouse</span>
-          </div>
-        </section>
-
-        {/* Sección de Módulos Principal */}
-        <section id="modulos" className="py-16 space-y-24 border-t border-violet-100 dark:border-violet-900/30">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl font-bold tracking-tight">Todo lo que necesitas para tu próxima contratación</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Tres herramientas integradas diseñadas para llevarte desde la preparación de tu documento hasta la oferta laboral final.
-            </p>
-          </div>
-
-          {/* Módulo 1: Analizador de CV & ATS */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              {/* Badge de Módulo 01: Violeta sólido y texto blanco para 100% contraste */}
-              <div className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-3 py-1 text-xs font-semibold text-white">
-                <FileText className="w-4 h-4" /> Módulo 01
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold">Diagnóstico e Impacto ATS</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Analiza el formato, la densidad de secciones y la compatibilidad técnica de tu archivo antes de enviarlo. Asegúrate de que los filtros automáticos puedan parsear tu experiencia correctamente.
+      <main>
+        {/* Hero: expediente abierto */}
+        <section className="bg-ink-deep text-ink-deep-foreground">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-[1.1fr_0.9fr] md:items-center md:py-24 lg:px-10">
+            <div>
+              <p className="text-sm text-ink-deep-foreground/55">
+                Antes de que lo vea un reclutador, lo revisa un algoritmo.
               </p>
-              <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Evaluación de formato y legibilidad técnica
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Detección de secciones omitidas o erróneas
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Puntuación global del perfil en tiempo real
-                </li>
-              </ul>
-            </div>
-            
-            {/* Visual Preview Módulo 1 */}
-            <div className="rounded-2xl border border-violet-200 dark:border-violet-900/50 bg-card p-6 shadow-lg space-y-4">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
-                <span className="text-xs font-semibold text-muted-foreground">Vista Previa: Diagnóstico de CV</span>
-                {/* Score ATS con Violeta Fuerte y Texto Blanco */}
-                <span className="text-xs font-bold text-white bg-violet-600 px-3 py-1 rounded-full shadow-xs">Score ATS: 88/100</span>
-              </div>
-              <div className="space-y-3 text-xs">
-                {/* Caja Verde: Fondo claro definido, borde verde y textos oscuros de alto contraste */}
-                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-950">Estructura Limpia</span>
-                    <p className="text-emerald-900 font-medium">Títulos de sección identificados correctamente por el analizador.</p>
-                  </div>
-                </div>
-                {/* Caja Amarilla/Ámbar: Fondo cálido claro, borde ámbar y texto marrón/oscuro contrastado */}
-                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 flex items-start gap-3">
-                  <AlertCircle className="w-4 h-4 text-amber-700 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-bold text-amber-950">Formato de Fechas</span>
-                    <p className="text-amber-900 font-medium">Usa el formato MM/AAAA para evitar inconsistencias en el orden cronológico.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Módulo 2: Job Match & Keywords */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center lg:flex-row-reverse">
-            <div className="space-y-6 lg:order-2">
-              {/* Badge de Módulo 02 */}
-              <div className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-3 py-1 text-xs font-semibold text-white">
-                <Target className="w-4 h-4" /> Módulo 02
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold">Match Exacto con la Vacante</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Compara tu currículum directamente contra la oferta de trabajo objetivo. Nuestra IA cruza los requisitos exigidos con tu experiencia para mostrarte exactamente qué palabras clave debes agregar.
+              <h1 className="mt-4 max-w-xl text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
+                Tu CV tiene un expediente. Ábrelo antes de postular.
+              </h1>
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-ink-deep-foreground/70">
+                CareerCopilot diagnostica tu CV frente al ATS, lo compara con la
+                vacante exacta y te deja practicar la entrevista, todo antes de
+                enviar la postulación.
               </p>
-              <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Extracción automática de requisitos y skills
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Identificación de brechas de palabras clave
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Recomendaciones precisas de adaptación
-                </li>
-              </ul>
-            </div>
 
-            {/* Visual Preview Módulo 2 */}
-            <div className="rounded-2xl border border-violet-200 dark:border-violet-900/50 bg-card p-6 shadow-lg space-y-4 lg:order-1">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
-                <span className="text-xs font-semibold text-muted-foreground">Coincidencia de Palabras Clave</span>
-                <span className="text-xs font-bold text-violet-700">75% Coincidencia</span>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link href="/register">
+                  <Button size="lg">Diagnosticar mi CV</Button>
+                </Link>
+                <a href="#modulos" className="text-sm font-medium text-ink-deep-foreground/70 hover:text-ink-deep-foreground">
+                  Ver los 4 módulos
+                </a>
               </div>
-              <div className="space-y-3 text-xs">
-                <div>
-                  <span className="font-semibold block mb-2 text-slate-800">Palabras Clave Encontradas:</span>
-                  {/* Badges Verdes de Skills: Texto verde muy oscuro sobre fondo menta/verde claro */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="px-2.5 py-1 rounded-md bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold">React.js</span>
-                    <span className="px-2.5 py-1 rounded-md bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold">TypeScript</span>
-                    <span className="px-2.5 py-1 rounded-md bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold">REST APIs</span>
-                  </div>
-                </div>
-                <div className="pt-2">
-                  <span className="font-semibold block mb-2 text-rose-700">Faltantes en tu CV:</span>
-                  {/* Badges Rosas de Skills Faltantes: Texto rojo oscuro sobre fondo rosa claro */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="px-2.5 py-1 rounded-md bg-rose-100 border border-rose-300 text-rose-950 font-bold">GraphQL</span>
-                    <span className="px-2.5 py-1 rounded-md bg-rose-100 border border-rose-300 text-rose-950 font-bold">CI/CD</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Módulo 3: Entrevistas IA */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              {/* Badge de Módulo 03 */}
-              <div className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-3 py-1 text-xs font-semibold text-white">
-                <BrainCircuit className="w-4 h-4" /> Módulo 03
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold">Simulador de Entrevista Inteligente</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Practica tus respuestas en un entorno realista generado a partir del puesto y tu CV. Recibe retroalimentación inmediata sobre la claridad de tus respuestas y la alineación con el perfil buscado.
+              <p className="mt-6 text-xs text-ink-deep-foreground/45">
+                Sin tarjeta de crédito · compatible con Workday, Taleo y Greenhouse
               </p>
-              <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Preguntas dinámicas adaptadas al rol
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Evaluación del método STAR en tus respuestas
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-violet-600" /> Sugerencias concretas para mejorar cada punto
-                </li>
-              </ul>
             </div>
 
-            {/* Visual Preview Módulo 3 */}
-            <div className="rounded-2xl border border-violet-200 dark:border-violet-900/50 bg-card p-6 shadow-lg space-y-4">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
-                <span className="text-xs font-semibold text-muted-foreground">Simulación Activa</span>
-                <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> En vivo
+            {/* Ficha de muestra */}
+            <div className="tab-cut border border-white/10 bg-card p-5 text-card-foreground">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <span className="font-mono text-xs text-muted-foreground">
+                  FICHA-00182 · CV_candidato.pdf
                 </span>
               </div>
-              <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-violet-50 border border-violet-200 space-y-1">
-                  <span className="font-bold text-violet-950 block">Reclutador IA:</span>
-                  <p className="text-slate-800 font-medium">"Cuéntame sobre una ocasión en la que tuviste que optimizar el rendimiento de una aplicación bajo presión."</p>
+
+              <div className="mt-4 flex items-end gap-3">
+                <span className="font-mono text-5xl font-bold leading-none text-foreground">88</span>
+                <span className="pb-1 text-sm text-muted-foreground">/ 100 score ATS</span>
+                <span className="ml-auto -rotate-3 rounded-sm border-2 border-success px-2 py-1 text-xs font-bold tracking-wide text-success">
+                  APROBADO
+                </span>
+              </div>
+
+              <div className="mt-5 space-y-2.5 text-sm">
+                <div className="flex items-start gap-2.5 rounded-sm border border-success/30 bg-success/5 p-3">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                  <p className="text-foreground">
+                    Estructura limpia: los títulos de sección se identifican sin problema.
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-100 border border-slate-200 space-y-1">
-                  <span className="font-bold text-slate-900 block">Feedback Instantáneo:</span>
-                  <p className="text-slate-800 font-medium">Buena estructura. Intenta añadir métricas cuantificables (ej. porcentaje de mejora) para dar más impacto a tu respuesta.</p>
+                <div className="flex items-start gap-2.5 rounded-sm border border-destructive/30 bg-destructive/5 p-3">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-destructive text-[10px] font-bold text-destructive">
+                    !
+                  </span>
+                  <p className="text-foreground">
+                    Faltan las palabras clave <span className="font-semibold">Docker</span> y{" "}
+                    <span className="font-semibold">CI/CD</span> para esta vacante.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section id="faq" className="py-16 border-t border-violet-100 dark:border-violet-900/30">
-          <div className="text-center max-w-xl mx-auto mb-10 space-y-2">
-            <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-              <HelpCircle className="w-5 h-5 text-violet-600" /> Preguntas Frecuentes
-            </h2>
-            <p className="text-xs text-muted-foreground">Todo lo que necesitas saber sobre CareerCopilot.</p>
+        {/* Módulos — secuencia real del flujo */}
+        <section id="modulos" className="mx-auto max-w-6xl px-6 py-20 lg:px-10">
+          <div className="max-w-xl">
+            <h2 className="text-3xl font-bold tracking-tight">Cuatro módulos, un mismo expediente</h2>
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              Cada paso queda guardado junto a los anteriores, así que la entrevista
+              y el email ya saben contra qué vacante estás postulando.
+            </p>
           </div>
 
-          <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="w-full space-y-3">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-sm font-semibold">
-                  ¿Cómo analiza mi CV frente a los filtros ATS?
-                </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                  Analizamos los algoritmos de lectura de las plataformas más usadas (Workday, Taleo, Greenhouse) para verificar la compatibilidad de formato, jerarquía de títulos y densidad de keywords.
-                </AccordionContent>
-              </AccordionItem>
+          <div className="mt-12 divide-y divide-border">
+            {modules.map((mod) => {
+              const Icon = mod.icon;
+              return (
+                <div
+                  key={mod.index}
+                  className="grid gap-6 py-10 md:grid-cols-[auto_1fr_1fr] md:items-start md:gap-10"
+                >
+                  <span className="font-mono text-sm text-muted-foreground/60">{mod.index}</span>
 
-              <AccordionItem value="item-2">
-                <AccordionTrigger className="text-sm font-semibold">
-                  ¿Es compatible con cualquier tipo de vacante laboral?
-                </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                  Sí. Puedes pegar la descripción de cualquier oferta de empleo y nuestra IA extraerá los requisitos técnicos y blandos específicos requeridos para esa posición.
-                </AccordionContent>
-              </AccordionItem>
+                  <div>
+                    <div className={`inline-flex items-center gap-2 border-l-2 pl-3 ${mod.accent}`}>
+                      <Icon className="h-4 w-4" />
+                      <span className="text-lg font-semibold text-foreground">{mod.title}</span>
+                    </div>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      {mod.description}
+                    </p>
+                  </div>
 
-              <AccordionItem value="item-3">
-                <AccordionTrigger className="text-sm font-semibold">
-                  ¿Puedo probar la plataforma de forma gratuita?
-                </AccordionTrigger>
-                <AccordionContent className="text-xs text-slate-600 leading-relaxed">
-                  Sí, puedes registrarte sin ingresar ninguna tarjeta de crédito y realizar tu primer diagnóstico de CV de forma totalmente gratuita.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  <ul className="space-y-2.5 text-sm">
+                    {mod.points.map((point) => (
+                      <li key={point} className="flex items-start gap-2.5 text-muted-foreground">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-foreground/40" />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </section>
 
-        {/* ÚNICO CTA FINAL */}
-        <section className="py-16">
-          <div className="rounded-3xl border border-violet-200 dark:border-violet-900/50 bg-gradient-to-r from-violet-600 to-indigo-600 p-10 text-white text-center space-y-6 max-w-4xl mx-auto shadow-xl">
-            <h2 className="text-3xl font-extrabold tracking-tight">
-              ¿Listo para conseguir más entrevistas?
-            </h2>
-            <p className="text-xs sm:text-sm text-violet-100 max-w-lg mx-auto leading-relaxed">
-              Sube tu CV ahora mismo, detecta tus puntos ciegos y optimízalo para la vacante que deseas en cuestión de minutos.
-            </p>
-            <div>
-              <Link href="/register">
-                <Button size="lg" className="bg-white text-violet-700 hover:bg-violet-50 font-bold text-sm gap-2 rounded-xl shadow-md h-12 px-8">
-                  Empezar Ahora Gratis <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+        {/* Cómo funciona */}
+        <section id="como-funciona" className="border-t border-border bg-card/40 px-6 py-20 lg:px-10">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-3xl font-bold tracking-tight">Cómo funciona</h2>
+            <div className="mt-10 grid gap-10 md:grid-cols-3">
+              <div>
+                <span className="font-mono text-sm text-primary">PASO 1</span>
+                <h3 className="mt-2 text-lg font-semibold">Sube tu CV</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  En PDF o Word. Lo leemos como lo haría un ATS y abrimos tu ficha.
+                </p>
+              </div>
+              <div>
+                <span className="font-mono text-sm text-primary">PASO 2</span>
+                <h3 className="mt-2 text-lg font-semibold">Pega la vacante</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Comparamos tu experiencia contra el texto exacto de la oferta.
+                </p>
+              </div>
+              <div>
+                <span className="font-mono text-sm text-primary">PASO 3</span>
+                <h3 className="mt-2 text-lg font-semibold">Practica y postula</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Genera el email y, si quieres, ensaya la entrevista antes de enviarlo.
+                </p>
+              </div>
             </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="mx-auto max-w-3xl px-6 py-20 lg:px-10">
+          <h2 className="text-3xl font-bold tracking-tight">Preguntas frecuentes</h2>
+          <Accordion type="single" collapsible className="mt-8">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>¿Cómo analiza mi CV frente a los filtros ATS?</AccordionTrigger>
+              <AccordionContent>
+                Revisamos el formato, la jerarquía de títulos y la densidad de palabras
+                clave de la forma en que lo haría un sistema como Workday, Taleo o
+                Greenhouse, y te mostramos exactamente qué falla.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>¿Es compatible con cualquier vacante?</AccordionTrigger>
+              <AccordionContent>
+                Sí. Pega el texto de cualquier oferta de empleo y la IA extrae los
+                requisitos técnicos y blandos específicos de esa posición.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>¿Puedo probarlo gratis?</AccordionTrigger>
+              <AccordionContent>
+                Sí, te registras sin tarjeta de crédito y el primer diagnóstico de CV
+                es gratuito. La simulación de entrevista es parte del plan Premium.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
+
+        {/* CTA final */}
+        <section className="bg-ink-deep px-6 py-16 text-ink-deep-foreground lg:px-10">
+          <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Abre tu expediente antes de postular.
+              </h2>
+              <p className="mt-2 max-w-md text-sm text-ink-deep-foreground/65">
+                El diagnóstico de CV es gratuito y toma menos de dos minutos.
+              </p>
+            </div>
+            <Link href="/register">
+              <Button size="lg" className="gap-2">
+                Empezar ahora <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-violet-100 dark:border-violet-900/30 bg-violet-50/30 dark:bg-violet-950/10 py-8 text-xs text-muted-foreground">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
-          <div className="flex items-center gap-2 font-bold text-foreground text-sm">
-            <Bot className="w-4 h-4 text-violet-600" /> CareerCopilot
+      <footer className="border-t border-border px-6 py-8 text-sm text-muted-foreground lg:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex items-center gap-2 font-semibold text-foreground">
+            <Stamp className="h-4 w-4 text-primary" /> CareerCopilot
           </div>
-          <p>© 2026 CareerCopilot. Todos los derechos reservados.</p>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-violet-600">Privacidad</a>
-            <a href="#" className="hover:text-violet-600">Términos</a>
-          </div>
+          <p>Proyecto de Capstone — DuocUC, 2026.</p>
         </div>
       </footer>
     </div>

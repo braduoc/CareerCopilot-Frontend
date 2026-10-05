@@ -3,7 +3,7 @@
 import { InterviewQuestion, AnswerFeedback } from "@/types/entrevista";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, User, CheckCircle2, AlertTriangle, Lightbulb } from "lucide-react";
+import { MessageSquare, User, CheckCircle2, AlertTriangle, Lightbulb } from "lucide-react";
 
 export interface MessageItem {
   id: string;
@@ -28,8 +28,8 @@ export function ChatBox({ messages }: ChatBoxProps) {
           }`}
         >
           {msg.sender === "ai" && (
-            <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center text-violet-600 dark:text-violet-200 shrink-0 border border-violet-200 dark:border-violet-900/50 shadow-2xs">
-              <Bot className="w-4 h-4" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border bg-secondary text-primary">
+              <MessageSquare className="h-4 w-4" />
             </div>
           )}
 
@@ -40,17 +40,21 @@ export function ChatBox({ messages }: ChatBoxProps) {
           >
             {/* Mensaje principal */}
             <div
-              className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-2xs ${
+              className={`rounded-md border p-4 text-sm leading-relaxed ${
                 msg.sender === "user"
-                  ? "bg-violet-600 text-white rounded-br-xs"
-                  : "bg-violet-50/50 dark:bg-violet-950/30 text-foreground border border-violet-200/80 dark:border-violet-900/40 rounded-bl-xs"
+                  ? "border-ink-deep/10 bg-ink-deep text-ink-deep-foreground"
+                  : "border-border bg-card text-foreground"
               }`}
             >
               {msg.questionData && (
                 <div className="mb-2 flex items-center gap-2">
-                  <Badge 
-                    variant="outline" 
-                    className="text-[10px] uppercase font-semibold border-violet-200 dark:border-violet-900 bg-violet-100/50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-200"
+                  <Badge
+                    variant="outline"
+                    className={
+                      msg.sender === "user"
+                        ? "border-ink-deep-foreground/30 text-ink-deep-foreground/80"
+                        : undefined
+                    }
                   >
                     {msg.questionData.category}
                   </Badge>
@@ -61,31 +65,24 @@ export function ChatBox({ messages }: ChatBoxProps) {
 
             {/* Retroalimentación si existe para este mensaje */}
             {msg.feedbackData && (
-              <Card className="border-violet-200 dark:border-violet-900/50 bg-violet-50/30  shadow-xs">
-                <CardHeader className="py-2.5 px-4 flex flex-row items-center justify-between border-b border-violet-100 dark:border-violet-900/40 bg-violet-100/40 dark:bg-violet-900/20 rounded-t-xl">
-                  <CardTitle className="text-xs font-semibold text-violet-700 dark:text-violet-200 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-violet-600 dark:text-violet-200" /> Evaluación de tu Respuesta
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between border-b border-border py-3">
+                  <CardTitle className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-success" /> Evaluación de tu Respuesta
                   </CardTitle>
-                  <Badge 
-                    variant="outline"
-                    className={
-                      msg.feedbackData.score >= 70 
-                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold"
-                        : "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold"
-                    }
-                  >
+                  <Badge variant={msg.feedbackData.score >= 70 ? "success" : "warning"}>
                     {msg.feedbackData.score} / 100
                   </Badge>
                 </CardHeader>
 
-                <CardContent className="p-4 space-y-3 text-xs">
+                <CardContent className="space-y-3 p-4 text-sm">
                   {/* Puntos Fuertes */}
                   {msg.feedbackData.strengths.length > 0 && (
                     <div>
-                      <p className="font-semibold text-violet-900 dark:text-violet-200 mb-1">
+                      <p className="mb-1 font-semibold text-foreground">
                         Fortalezas:
                       </p>
-                      <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <ul className="list-inside list-disc space-y-0.5 text-muted-foreground">
                         {msg.feedbackData.strengths.map((item, idx) => (
                           <li key={idx}>{item}</li>
                         ))}
@@ -96,10 +93,10 @@ export function ChatBox({ messages }: ChatBoxProps) {
                   {/* Áreas a mejorar */}
                   {msg.feedbackData.areasForImprovement.length > 0 && (
                     <div>
-                      <p className="font-semibold text-violet-900 dark:text-violet-200 mb-1 flex items-center gap-1">
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> A mejorar:
+                      <p className="mb-1 flex items-center gap-1.5 font-semibold text-foreground">
+                        <AlertTriangle className="h-3.5 w-3.5 text-primary" /> A mejorar:
                       </p>
-                      <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <ul className="list-inside list-disc space-y-0.5 text-muted-foreground">
                         {msg.feedbackData.areasForImprovement.map((item, idx) => (
                           <li key={idx}>{item}</li>
                         ))}
@@ -109,12 +106,12 @@ export function ChatBox({ messages }: ChatBoxProps) {
 
                   {/* Respuesta recomendada */}
                   {msg.feedbackData.suggestedAnswer && (
-                    <div className="pt-2 border-t border-violet-100 dark:border-violet-900/40">
-                      <p className="font-semibold text-violet-900 dark:text-violet-200 mb-1.5 flex items-center gap-1">
-                        <Lightbulb className="w-3.5 h-3.5 text-violet-600 dark:text-violet-200" /> Respuesta Sugerida / Modelo:
+                    <div className="border-t border-border pt-3">
+                      <p className="mb-1.5 flex items-center gap-1.5 font-semibold text-foreground">
+                        <Lightbulb className="h-3.5 w-3.5 text-primary" /> Respuesta Sugerida / Modelo:
                       </p>
-                      <p className="italic text-muted-foreground bg-card/80 p-3 rounded-xl border border-violet-200/60 dark:border-violet-900/30 leading-relaxed shadow-2xs">
-                        "{msg.feedbackData.suggestedAnswer}"
+                      <p className="rounded-sm border border-border bg-secondary/50 p-3 italic leading-relaxed text-muted-foreground">
+                        &ldquo;{msg.feedbackData.suggestedAnswer}&rdquo;
                       </p>
                     </div>
                   )}
@@ -124,8 +121,8 @@ export function ChatBox({ messages }: ChatBoxProps) {
           </div>
 
           {msg.sender === "user" && (
-            <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white shrink-0 shadow-2xs">
-              <User className="w-4 h-4" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-ink-deep/20 bg-ink-deep text-ink-deep-foreground">
+              <User className="h-4 w-4" />
             </div>
           )}
         </div>
