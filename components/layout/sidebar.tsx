@@ -1,10 +1,12 @@
 "use client";
 
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
+  UserRound,
   X,
   LogOut,
   LayoutDashboard,
@@ -32,6 +34,7 @@ const navigationLinks: NavItem[] = [
   { name: "Entrevista IA", href: "/entrevista", icon: MessageSquare },
   { name: "Email", href: "/email", icon: Mail },
   { name: "Historial", href: "/historial", icon: History },
+  { name: "Mi perfil", href: "/perfil", icon: UserRound },
 ];
 
 function NavList({ onNavigate }: { onNavigate?: () => void }) {
@@ -149,14 +152,15 @@ export function Sidebar() {
             </div>
             <NavList onNavigate={() => setIsOpen(false)} />
             {user && (
-              <div className="mt-6 border-t border-white/10 px-4 pt-4">
+              <Link href="/perfil" onClick={() => setIsOpen(false)} className="mt-6 block border-t border-white/10 px-4 pt-4">
                 <p className="truncate text-sm font-semibold text-ink-deep-foreground">{user.fullName}</p>
                 <p className="truncate text-xs text-ink-deep-foreground/50">{user.email}</p>
-              </div>
+              </Link>
             )}
+            <ThemeToggle className="mt-2 w-full text-ink-deep-foreground/60 hover:bg-white/10 hover:text-ink-deep-foreground" />
             <button
               onClick={handleLogout}
-              className="mt-2 flex w-full items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/60 hover:bg-white/10 hover:text-ink-deep-foreground"
+              className="flex w-full items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/60 hover:bg-white/10 hover:text-ink-deep-foreground"
             >
               <LogOut className="h-4 w-4" /> Cerrar sesión
             </button>
@@ -171,11 +175,12 @@ export function Sidebar() {
           <NavList />
         </div>
         {user && (
-          <div className="mx-4 mb-3 border-t border-white/10 px-4 pt-4">
+          <Link href="/perfil" className="mx-4 mb-3 block border-t border-white/10 px-4 pt-4 transition-colors hover:text-primary" title="Mi perfil">
             <p className="truncate text-sm font-semibold text-ink-deep-foreground">{user.fullName}</p>
             <p className="truncate text-xs text-ink-deep-foreground/50">{user.email}</p>
-          </div>
+          </Link>
         )}
+        <ThemeToggle className="mx-4 text-ink-deep-foreground/50 hover:bg-white/5 hover:text-ink-deep-foreground" />
         <button
           onClick={handleLogout}
           className="mx-4 mb-6 flex items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/50 hover:bg-white/5 hover:text-ink-deep-foreground"

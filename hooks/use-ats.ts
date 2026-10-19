@@ -23,6 +23,18 @@ export function useAts() {
     }
   }, []);
 
+  const loadDiagnostic = useCallback(async (id: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      setDiagnostic(await atsService.getById(id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo abrir el diagnóstico");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const resetDiagnostic = useCallback(() => {
     setDiagnostic(null);
     setError(null);
@@ -33,6 +45,7 @@ export function useAts() {
     isLoading,
     error,
     analyzeCv,
+    loadDiagnostic,
     resetDiagnostic,
   };
 }

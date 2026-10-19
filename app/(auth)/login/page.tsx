@@ -107,7 +107,12 @@ export default function LoginPage() {
                 <label className="block text-sm font-bold text-foreground">
                   Contraseña
                 </label>
-                <span className="text-xs font-medium text-muted-foreground">Mínimo 8 caracteres</span>
+                <Link
+                  href={APP_ROUTES.FORGOT_PASSWORD}
+                  className="text-xs font-semibold text-primary transition-colors hover:text-foreground hover:underline"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />

@@ -64,7 +64,8 @@ export function translateAuthError(message: string): string {
   if (m.includes("email not confirmed")) return "Debes confirmar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.";
   if (m.includes("already registered") || m.includes("already exists")) return "Ya existe una cuenta con ese correo. Inicia sesión.";
   if (m.includes("at least")) return "La contraseña es demasiado corta. Usa al menos 8 caracteres.";
-  if (m.includes("rate limit")) return "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.";
+  if (m.includes("same password")) return "La nueva contraseña debe ser distinta de la anterior.";
+  if (m.includes("rate limit") || m.includes("security purposes")) return "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.";
   if (m.includes("fetch") || m.includes("network")) return "No se pudo conectar con el servicio de autenticación.";
   return message;
 }

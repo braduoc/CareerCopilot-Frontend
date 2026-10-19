@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { AtsHistory } from "@/components/modules/ats/ats-history";
 import { CvUploader } from "@/components/modules/ats/cv-uploader";
 import { AtsScoreCard } from "@/components/modules/ats/ats-score-card";
 import { AtsSkeleton } from "@/components/modules/ats/ats-skeleton";
@@ -9,11 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { FileCheck2, FileSearch, ShieldCheck, Zap } from "lucide-react";
 
 export default function AtsPage() {
-  const { diagnostic, isLoading, error, analyzeCv, resetDiagnostic } = useAts();
+  const { diagnostic, isLoading, error, analyzeCv, loadDiagnostic, resetDiagnostic } = useAts();
+  const [historyKey, setHistoryKey] = useState(0);
 
   const handleFileSelect = async (file: File) => {
     try {
       await analyzeCv(file);
+      setHistoryKey((k) => k + 1);
     } catch (err) {
       console.error("Error al procesar el archivo:", err);
     }
@@ -98,6 +102,8 @@ export default function AtsPage() {
           </div>
         </div>
       )}
+
+      {!diagnostic && !isLoading && <AtsHistory key={historyKey} onSelect={loadDiagnostic} />}
 
       {/* Renderizado Condicional: Skeleton vs Resultado */}
       {isLoading && <AtsSkeleton />}

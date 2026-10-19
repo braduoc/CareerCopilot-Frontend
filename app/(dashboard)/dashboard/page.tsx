@@ -18,7 +18,14 @@ export default function DashboardPage() {
     { label: "Puntaje ATS actual", value: summary?.currentAtsScore != null ? `${summary.currentAtsScore}/100` : "—" },
     { label: "Último Job Match", value: summary?.latestMatchScore != null ? `${summary.latestMatchScore}%` : "—" },
     { label: "Análisis guardados", value: summary ? String(summary.historyCount) : "—" },
-    { label: "Plan", value: summary ? (summary.plan === "premium" ? "Premium" : "Gratuito") : "—" },
+    {
+      label: "Plan",
+      value: summary ? (summary.plan === "premium" ? "Premium" : "Gratuito") : "—",
+      hint:
+        summary && summary.interviewsLimit != null
+          ? `Entrevistas: ${summary.interviewsUsed}/${summary.interviewsLimit}`
+          : undefined,
+    },
   ];
 
   const tools = [
@@ -69,6 +76,7 @@ export default function DashboardPage() {
             <div key={stat.label} className="bg-card px-4 py-4">
               <dt className="text-xs text-muted-foreground">{stat.label}</dt>
               <dd className="mt-1 font-mono text-2xl font-bold text-foreground">{stat.value}</dd>
+              {"hint" in stat && stat.hint && <p className="mt-0.5 text-xs text-muted-foreground">{stat.hint}</p>}
             </div>
           ))}
         </dl>

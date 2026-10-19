@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertCircle, XCircle, RotateCcw, FileCheck2 } from "lucide-react";
+import { CheckCircle, AlertCircle, XCircle, RotateCcw, FileCheck2, Download } from "lucide-react";
+import { PrintOnly, printPage } from "@/components/ui/print-only";
 
 export interface AtsScoreCardProps {
   diagnostic: ATSDiagnostic;
@@ -17,6 +18,26 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
 
   return (
     <div className="space-y-6">
+      <PrintOnly>
+        <h1 className="text-2xl font-bold">Diagnóstico ATS — CareerCopilot</h1>
+        <p className="mt-1 text-sm">{new Date().toLocaleDateString("es-CL", { dateStyle: "long" })}</p>
+        <p className="mt-4 text-4xl font-bold">{score} / 100 · {isPass ? "Aprobado" : "Revisar"}</p>
+        <p className="mt-3 text-sm leading-relaxed">{summary}</p>
+        <h2 className="mt-5 text-base font-bold">Secciones detectadas</h2>
+        <ul className="mt-1 list-disc pl-5 text-sm">
+          <li>Información de contacto: {sections.contactInfo ? "sí" : "no"}</li>
+          <li>Experiencia laboral: {sections.workExperience ? "sí" : "no"}</li>
+          <li>Educación: {sections.education ? "sí" : "no"}</li>
+          <li>Habilidades: {sections.skills ? "sí" : "no"}</li>
+        </ul>
+        <h2 className="mt-5 text-base font-bold">Fortalezas</h2>
+        <ul className="mt-1 list-disc pl-5 text-sm">{strengths.map((t) => <li key={t}>{t}</li>)}</ul>
+        <h2 className="mt-5 text-base font-bold">Sugerencias de mejora</h2>
+        <ul className="mt-1 list-disc pl-5 text-sm">{improvements.map((t) => <li key={t}>{t}</li>)}</ul>
+        <h2 className="mt-5 text-base font-bold">Palabras clave faltantes</h2>
+        <p className="mt-1 text-sm">{missingKeywords.length ? missingKeywords.join(", ") : "Ninguna"}</p>
+      </PrintOnly>
+
       {/* Ficha de resultado: score y veredicto */}
       <div className="rounded-md border border-ink-deep/10 bg-ink-deep p-6 text-ink-deep-foreground">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -33,7 +54,7 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span
               className={`-rotate-3 rounded-sm border-2 px-2.5 py-1 text-sm font-bold tracking-wide ${
                 isPass ? "border-success text-success" : "border-destructive text-destructive"
@@ -41,6 +62,16 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             >
               {isPass ? "APROBADO" : "REVISAR"}
             </span>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={printPage}
+              className="gap-2 border-ink-deep-foreground/20 bg-transparent text-ink-deep-foreground hover:bg-white/5 hover:text-ink-deep-foreground"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Descargar PDF
+            </Button>
 
             {onReset && (
               <Button

@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Notice } from "@/components/ui/notice"
-import { Mail, History, ArrowLeft, Copy, Check, AlertCircle, Save, Loader2, Sparkles } from "lucide-react"
+import { Mail, History, ArrowLeft, Copy, Check, AlertCircle, Save, Loader2, Sparkles, Download } from "lucide-react"
+import { PrintOnly, printPage } from "@/components/ui/print-only"
 import { historialService } from "@/services/historial-service"
 import { emailService } from "@/services/email-service"
 import { EmailDraft } from "@/types/email"
@@ -117,6 +118,12 @@ function EmailContent() {
 
   return (
     <div className="space-y-6">
+      {draft && (
+        <PrintOnly>
+          <p className="text-sm"><strong>Asunto:</strong> {subject}</p>
+          <div className="mt-5 whitespace-pre-wrap text-sm leading-relaxed">{body}</div>
+        </PrintOnly>
+      )}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -175,7 +182,7 @@ function EmailContent() {
 
         <Card>
           <CardHeader className="border-b border-border">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base">Borrador</CardTitle>
                 <CardDescription>Puedes editar el texto antes de usarlo.</CardDescription>
@@ -185,6 +192,9 @@ function EmailContent() {
                   <Button size="sm" variant="outline" className="gap-1.5" onClick={handleCopy}>
                     {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                     {copied ? "Copiado" : "Copiar"}
+                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={printPage}>
+                    <Download className="h-3.5 w-3.5" /> PDF
                   </Button>
                   <Button size="sm" className="gap-1.5" onClick={handleSave} disabled={!dirty || isSaving}>
                     {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
