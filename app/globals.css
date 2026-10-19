@@ -1,94 +1,29 @@
-@import "tailwindcss";
+/* vscode-css-custom-data */
+/* eslint-disable */
 
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-}
+@import "tailwindcss";
 
 @layer base {
   :root {
-    /* Fondos globales y tarjetas */
-    --background: 250 33% 98%;          /* #F8F7FF */
-    --foreground: 245 45% 10%;          /* #0F0E1F - Oscurecido para mayor legibilidad */
-
-    --card: 0 0% 100%;                  /* #FFFFFF */
-    --card-foreground: 245 45% 10%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 245 45% 10%;
-
-    /* Primario: violet-600 */
-    --primary: 262 83% 58%;             /* #7C3AED */
-    --primary-foreground: 0 0% 100%;
-
-    /* Secundario: Fondo suave con texto violeta oscuro (ratio > 4.5:1) */
-    --secondary: 255 85% 95%;           /* #ECE5FF */
-    --secondary-foreground: 267 85% 36%;/* #4A12B3 - Oscurecido para contraste sobre fondo claro */
-
-    /* Muted & Bordes: Ajustado para no perderse */
-    --muted: 248 25% 93%;               /* #EAE8F5 */
-    --muted-foreground: 245 20% 38%;    /* #4C4863 - Texto secundario con mayor contraste */
-
-    --accent: 255 85% 95%;
-    --accent-foreground: 267 85% 36%;
-
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 248 20% 86%;              /* #D7D4E6 - Bordes más definidos */
-    --input: 248 20% 86%;
-    --ring: 262 83% 58%;
-
-    --radius: 0.85rem;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
   }
-
-  .dark {
-    /* Fondo más puro para evitar tinte lavado */
-    --background: 245 40% 6%;           /* #0A0914 */
-    --foreground: 250 20% 98%;          /* #FAFAFC */
-
-    --card: 245 35% 10%;                /* #131124 */
-    --card-foreground: 250 20% 98%;
-
-    --popover: 245 35% 10%;
-    --popover-foreground: 250 20% 98%;
-
-    /* Primario en dark: violet-400 */
-    --primary: 262 83% 70%;
-    --primary-foreground: 0 0% 100%;
-
-    /* Secundario dark */
-    --secondary: 250 30% 16%;
-    --secondary-foreground: 267 85% 85%;
-
-    --muted: 250 30% 16%;
-    --muted-foreground: 245 15% 72%;    /* #AFADC2 - Más claro para lectura cómoda en dark mode */
-
-    --accent: 250 30% 16%;
-    --accent-foreground: 267 85% 85%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 245 25% 22%;
-    --input: 245 25% 22%;
-    --ring: 262 83% 70%;
-  }
-}
-
-.bg-brand-gradient {
-  background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
 }

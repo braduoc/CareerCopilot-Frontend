@@ -1,49 +1,50 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "secondary" | "outline" | "ghost" | "destructive";
-  size?: "default" | "sm" | "lg" | "icon";
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+  asChild?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", ...props }, ref) => {
+    // Mapeo manual de variantes de Tailwind
     const variantStyles = {
-      default:
-        "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm rounded-xl",
-      secondary:
-        "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      outline:
-        "border border-border bg-transparent hover:bg-secondary text-foreground",
-      ghost:
-        "hover:bg-secondary text-muted-foreground hover:text-foreground",
-      destructive:
-        "bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 shadow-sm",
-    };
+      default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+      destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+      outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+      secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+      ghost: "hover:bg-accent hover:text-accent-foreground",
+      link: "text-primary underline-offset-4 hover:underline",
+    }
 
+    // Mapeo manual de tamaños
     const sizeStyles = {
-      default: "h-10 px-4 py-2 text-sm",
-      sm: "h-8 px-3 text-xs rounded-md",
-      lg: "h-12 px-6 text-base rounded-lg",
-      icon: "h-10 w-10 p-2 items-center justify-center",
-    };
+      default: "h-9 px-4 py-2",
+      sm: "h-8 rounded-md px-3 text-xs",
+      lg: "h-10 rounded-md px-8",
+      icon: "h-9 w-9",
+    }
+
+    const baseStyles =
+      "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
 
     return (
       <button
+        ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
-          variantStyles[variant],
-          sizeStyles[size],
+          baseStyles,
+          variantStyles[variant] || variantStyles.default,
+          sizeStyles[size] || sizeStyles.default,
           className
         )}
-        ref={ref}
         {...props}
       />
-    );
+    )
   }
-);
+)
 
-Button.displayName = "Button";
+Button.displayName = "Button"
 
-export { Button };
+export { Button }

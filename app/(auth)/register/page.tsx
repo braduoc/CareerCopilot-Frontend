@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,27 +16,70 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = (e: FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !fullName.trim() || !password.trim()) return;
+  
 
-    setIsLoading(true);
 
-    // Simulación de creación de cuenta
-    setTimeout(() => {
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, "mock_jwt_token_register_67890");
-      localStorage.setItem(
-        STORAGE_KEYS.USER_DATA,
-        JSON.stringify({
-          id: "usr-2",
-          email,
-          fullName,
-        })
+const handleRegister = async (e: FormEvent) => {
+  e.preventDefault();
+
+  if (!email.trim() || !fullName.trim() || !password) return;
+
+  setIsLoading(true);
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        data: {
+          full_name: fullName.trim(),
+        },
+      },
+    });
+
+    if (error) {
+      alert(`No se pudo crear la cuenta: ${error.message}`);
+      return;
+    }
+
+    if (!data.session) {
+      alert(
+        "Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión."
       );
-      setIsLoading(false);
-      router.push(APP_ROUTES.HOME);
-    }, 1200);
-  };
+      router.push(APP_ROUTES.LOGIN);
+      return;
+    }
+
+    if (!data.user) {
+      alert("No se pudo obtener la información de la cuenta.");
+      return;
+    }
+
+    localStorage.setItem(
+      STORAGE_KEYS.AUTH_TOKEN,
+      data.session.access_token
+    );
+
+    localStorage.setItem(
+      STORAGE_KEYS.USER_DATA,
+      JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        fullName:
+          data.user.user_metadata?.full_name || fullName.trim(),
+      })
+    );
+
+    router.push(APP_ROUTES.HOME);
+  } catch (error) {
+    console.error("Error de registro:", error);
+    alert("No se pudo conectar con Supabase. Revisa tu conexión.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground lg:grid lg:grid-cols-[0.9fr_1.1fr]">

@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,27 +15,53 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: FormEvent) => {
+  
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+
+    if (!email.trim() || !password) return;
 
     setIsLoading(true);
 
-    // Simulación de autenticación exitosa
-    setTimeout(() => {
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, "mock_jwt_token_12345");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        alert(`No se pudo iniciar sesión: ${error.message}`);
+        return;
+      }
+
+      if (!data.session) {
+        alert("No se recibió una sesión válida. Inténtalo de nuevo.");
+        return;
+      }
+
+      localStorage.setItem(
+        STORAGE_KEYS.AUTH_TOKEN,
+        data.session.access_token
+      );
+
       localStorage.setItem(
         STORAGE_KEYS.USER_DATA,
         JSON.stringify({
-          id: "usr-1",
-          email,
-          fullName: "Usuario Demo",
+          id: data.user.id,
+          email: data.user.email,
+          fullName: data.user.user_metadata?.full_name || "Usuario",
         })
       );
-      setIsLoading(false);
+
       router.push(APP_ROUTES.HOME);
-    }, 1200);
+    } catch (error) {
+      console.error("Error de inicio de sesión:", error);
+      alert("No se pudo conectar con Supabase. Revisa tu conexión.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground lg:grid lg:grid-cols-[0.9fr_1.1fr]">
