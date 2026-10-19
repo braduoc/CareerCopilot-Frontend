@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -16,6 +16,8 @@ import {
   Stamp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { signOut, StoredUser } from "@/lib/auth";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 interface NavItem {
   name: string;
@@ -89,8 +91,25 @@ export function Sidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLogout = () => {
-    router.push("/login");
+  const rawUser = useSyncExternalStore(
+    (cb) => {
+      window.addEventListener("storage", cb);
+      return () => window.removeEventListener("storage", cb);
+    },
+    () => localStorage.getItem(STORAGE_KEYS.USER_DATA),
+    () => null
+  );
+  const user = useMemo<StoredUser | null>(() => {
+    try {
+      return rawUser ? (JSON.parse(rawUser) as StoredUser) : null;
+    } catch {
+      return null;
+    }
+  }, [rawUser]);
+
+  const handleLogout = async () => {
+    await signOut();
+    router.replace("/login");
   };
 
   return (
@@ -129,9 +148,15 @@ export function Sidebar() {
               </button>
             </div>
             <NavList onNavigate={() => setIsOpen(false)} />
+            {user && (
+              <div className="mt-6 border-t border-white/10 px-4 pt-4">
+                <p className="truncate text-sm font-semibold text-ink-deep-foreground">{user.fullName}</p>
+                <p className="truncate text-xs text-ink-deep-foreground/50">{user.email}</p>
+              </div>
+            )}
             <button
               onClick={handleLogout}
-              className="mt-8 flex w-full items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/60 hover:bg-white/10 hover:text-ink-deep-foreground"
+              className="mt-2 flex w-full items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/60 hover:bg-white/10 hover:text-ink-deep-foreground"
             >
               <LogOut className="h-4 w-4" /> Cerrar sesión
             </button>
@@ -145,6 +170,12 @@ export function Sidebar() {
         <div className="flex-1 pr-2">
           <NavList />
         </div>
+        {user && (
+          <div className="mx-4 mb-3 border-t border-white/10 px-4 pt-4">
+            <p className="truncate text-sm font-semibold text-ink-deep-foreground">{user.fullName}</p>
+            <p className="truncate text-xs text-ink-deep-foreground/50">{user.email}</p>
+          </div>
+        )}
         <button
           onClick={handleLogout}
           className="mx-4 mb-6 flex items-center gap-3 rounded-sm px-4 py-2.5 text-sm font-medium text-ink-deep-foreground/50 hover:bg-white/5 hover:text-ink-deep-foreground"

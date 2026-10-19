@@ -5,6 +5,8 @@ import { Upload, FileText, CheckCircle2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const MAX_BYTES = 5 * 1024 * 1024;
+
 export interface CvUploaderProps {
   onFileSelect?: (file: File) => void;
   onFileUpload?: (file: File) => void;
@@ -18,16 +20,25 @@ export function CvUploader({
 }: CvUploaderProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFile = (file: File) => {
-    if (file && (file.type === "application/pdf" || file.name.endsWith(".docx"))) {
+    const name = file?.name.toLowerCase() ?? "";
+    if (!file || !(name.endsWith(".pdf") || name.endsWith(".docx"))) {
+      setError("Selecciona un archivo PDF o DOCX válido.");
+      return;
+    }
+    if (file.size > MAX_BYTES) {
+      setError("El archivo supera el máximo de 5 MB.");
+      return;
+    }
+    {
+      setError(null);
       setSelectedFile(file);
 
       // Soporta tanto onFileSelect como onFileUpload
       if (onFileSelect) onFileSelect(file);
       if (onFileUpload) onFileUpload(file);
-    } else {
-      alert("Por favor selecciona un archivo PDF o DOCX válido.");
     }
   };
 
@@ -55,6 +66,7 @@ export function CvUploader({
   };
 
   const clearFile = () => {
+    setError(null);
     setSelectedFile(null);
   };
 
@@ -93,6 +105,11 @@ export function CvUploader({
               Seleccionar archivo
             </span>
           </label>
+          {error && (
+            <p role="alert" className="mt-4 text-sm font-medium text-destructive">
+              {error}
+            </p>
+          )}
         </div>
       ) : (
         <div className="border border-border rounded-md p-4 flex items-center justify-between bg-card">

@@ -52,11 +52,11 @@ export function ChatInput({ onSendMessage, isLoading = false, disabled = false }
           )}
         </Button>
       </div>
-      <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1 text-xs text-muted-foreground">
         <span className="font-medium text-primary/80">
           Responde emulando un escenario real de entrevista
         </span>
-        <span className="flex items-center gap-1">
+        <span className="hidden items-center gap-1 sm:flex">
           Presiona <CornerDownLeft className="inline h-3 w-3 text-primary" /> Enter para enviar
         </span>
       </div>

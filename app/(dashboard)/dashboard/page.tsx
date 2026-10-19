@@ -1,9 +1,26 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { dashboardService } from "@/services/dashboard-service";
+import { DashboardSummary } from "@/types/dashboard";
 import { FileCheck2, Target, History, ArrowUpRight } from "lucide-react";
 
 export default function DashboardPage() {
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [summaryError, setSummaryError] = useState(false);
+
+  useEffect(() => {
+    dashboardService.summary().then(setSummary).catch(() => setSummaryError(true));
+  }, []);
+
+  const stats = [
+    { label: "Puntaje ATS actual", value: summary?.currentAtsScore != null ? `${summary.currentAtsScore}/100` : "—" },
+    { label: "Último Job Match", value: summary?.latestMatchScore != null ? `${summary.latestMatchScore}%` : "—" },
+    { label: "Análisis guardados", value: summary ? String(summary.historyCount) : "—" },
+    { label: "Plan", value: summary ? (summary.plan === "premium" ? "Premium" : "Gratuito") : "—" },
+  ];
+
   const tools = [
     {
       index: "01",
@@ -43,6 +60,21 @@ export default function DashboardPage() {
           Revisa tu CV, entiende cada vacante y llega mejor preparado a tus
           entrevistas. Cada diagnóstico queda guardado en tu historial.
         </p>
+      </div>
+
+      {/* Resumen de actividad */}
+      <div>
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="bg-card px-4 py-4">
+              <dt className="text-xs text-muted-foreground">{stat.label}</dt>
+              <dd className="mt-1 font-mono text-2xl font-bold text-foreground">{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+        {summaryError && (
+          <p className="mt-2 text-xs text-muted-foreground">No se pudo cargar tu resumen en este momento.</p>
+        )}
       </div>
 
       {/* Fichas de acceso */}

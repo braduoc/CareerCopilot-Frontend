@@ -27,7 +27,7 @@ export default function AtsPage() {
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="outline" className="gap-1.5 font-medium text-primary border-primary/30">
               <FileCheck2 className="w-3.5 h-3.5 text-primary" />
-              Algoritmo de Escaneo ATS v2.4
+              Análisis con IA
             </Badge>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">

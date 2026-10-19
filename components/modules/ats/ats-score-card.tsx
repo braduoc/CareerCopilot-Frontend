@@ -145,7 +145,7 @@ function SectionCheck({ label, isValid }: { label: string; isValid: boolean }) {
       ) : (
         <XCircle className="h-4 w-4 shrink-0 text-destructive" />
       )}
-      <span className="truncate text-sm font-medium text-foreground">
+      <span className="text-sm font-medium leading-tight text-foreground">
         {label}
       </span>
     </div>

@@ -1,12 +1,14 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
+import { saveSession, translateAuthError } from "@/lib/auth";
+import { Notice } from "@/components/ui/notice";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { APP_ROUTES, STORAGE_KEYS } from "@/lib/constants";
+import { APP_ROUTES } from "@/lib/constants";
 import { ArrowRight, ArrowLeft, Lock, Mail, User, Stamp } from "lucide-react";
 
 export default function RegisterPage() {
@@ -15,69 +17,46 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
-  
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !fullName.trim() || !password) return;
 
+    setIsLoading(true);
+    setError(null);
+    setInfo(null);
 
-const handleRegister = async (e: FormEvent) => {
-  e.preventDefault();
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: { data: { full_name: fullName.trim() } },
+      });
 
-  if (!email.trim() || !fullName.trim() || !password) return;
+      if (authError) {
+        setError(translateAuthError(authError.message));
+        return;
+      }
+      if (!data.session || !data.user) {
+        setInfo("Cuenta creada. Revisa tu correo para confirmar el registro y luego inicia sesión.");
+        return;
+      }
 
-  setIsLoading(true);
-
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: {
-          full_name: fullName.trim(),
-        },
-      },
-    });
-
-    if (error) {
-      alert(`No se pudo crear la cuenta: ${error.message}`);
-      return;
-    }
-
-    if (!data.session) {
-      alert(
-        "Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión."
-      );
-      router.push(APP_ROUTES.LOGIN);
-      return;
-    }
-
-    if (!data.user) {
-      alert("No se pudo obtener la información de la cuenta.");
-      return;
-    }
-
-    localStorage.setItem(
-      STORAGE_KEYS.AUTH_TOKEN,
-      data.session.access_token
-    );
-
-    localStorage.setItem(
-      STORAGE_KEYS.USER_DATA,
-      JSON.stringify({
+      saveSession(data.session.access_token, {
         id: data.user.id,
-        email: data.user.email,
-        fullName:
-          data.user.user_metadata?.full_name || fullName.trim(),
-      })
-    );
+        email: data.user.email ?? email.trim(),
+        fullName: data.user.user_metadata?.full_name || fullName.trim(),
+      });
+      router.push(APP_ROUTES.HOME);
+    } catch {
+      setError("No se pudo conectar con el servicio de autenticación. Revisa tu conexión.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    router.push(APP_ROUTES.HOME);
-  } catch (error) {
-    console.error("Error de registro:", error);
-    alert("No se pudo conectar con Supabase. Revisa tu conexión.");
-  } finally {
-    setIsLoading(false);
-  }
-};
 
 
 
@@ -178,6 +157,9 @@ const handleRegister = async (e: FormEvent) => {
                 />
               </div>
             </div>
+
+            {error && <Notice tone="error">{error}</Notice>}
+            {info && <Notice tone="success">{info}</Notice>}
 
             <Button
               type="submit"

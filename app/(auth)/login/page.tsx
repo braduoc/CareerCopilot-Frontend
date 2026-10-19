@@ -1,12 +1,14 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
+import { saveSession, translateAuthError } from "@/lib/auth";
+import { Notice } from "@/components/ui/notice";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { APP_ROUTES, STORAGE_KEYS } from "@/lib/constants";
+import { APP_ROUTES } from "@/lib/constants";
 import { ArrowRight, ArrowLeft, Lock, Mail, Stamp } from "lucide-react";
 
 export default function LoginPage() {
@@ -14,53 +16,43 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-
     if (!email.trim() || !password) return;
 
     setIsLoading(true);
+    setError(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
       });
 
-      if (error) {
-        alert(`No se pudo iniciar sesión: ${error.message}`);
+      if (authError) {
+        setError(translateAuthError(authError.message));
+        return;
+      }
+      if (!data.session || !data.user) {
+        setError("No se recibió una sesión válida. Inténtalo de nuevo.");
         return;
       }
 
-      if (!data.session) {
-        alert("No se recibió una sesión válida. Inténtalo de nuevo.");
-        return;
-      }
-
-      localStorage.setItem(
-        STORAGE_KEYS.AUTH_TOKEN,
-        data.session.access_token
-      );
-
-      localStorage.setItem(
-        STORAGE_KEYS.USER_DATA,
-        JSON.stringify({
-          id: data.user.id,
-          email: data.user.email,
-          fullName: data.user.user_metadata?.full_name || "Usuario",
-        })
-      );
-
+      saveSession(data.session.access_token, {
+        id: data.user.id,
+        email: data.user.email ?? email.trim(),
+        fullName: data.user.user_metadata?.full_name || data.user.email || "Usuario",
+      });
       router.push(APP_ROUTES.HOME);
-    } catch (error) {
-      console.error("Error de inicio de sesión:", error);
-      alert("No se pudo conectar con Supabase. Revisa tu conexión.");
+    } catch {
+      setError("No se pudo conectar con el servicio de autenticación. Revisa tu conexión.");
     } finally {
       setIsLoading(false);
     }
   };
+
 
 
   return (
@@ -130,6 +122,8 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+
+            {error && <Notice tone="error">{error}</Notice>}
 
             <Button
               type="submit"
