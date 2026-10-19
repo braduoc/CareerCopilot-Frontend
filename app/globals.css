@@ -1,29 +1,134 @@
-/* vscode-css-custom-data */
-/* eslint-disable */
-
 @import "tailwindcss";
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-ink-deep: hsl(var(--ink-deep));
+  --color-ink-deep-foreground: hsl(var(--ink-deep-foreground));
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-space-mono);
+}
+
+:root {
+  --font-plex-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-space-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+}
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    /* "Legajo": paleta documental — papel cálido-gris, tinta navy, un único
+       acento ámbar de marca, verde/rojo reservados a veredictos. */
+
+    --background: 54 14% 91%;           /* #EEEDE4 papel */
+    --foreground: 220 20% 10%;          /* #141922 tinta */
+
+    --card: 54 22% 96%;                 /* #F8F7F1 ficha */
+    --card-foreground: 220 20% 10%;
+
+    --popover: 54 22% 96%;
+    --popover-foreground: 220 20% 10%;
+
+    /* Primario: ámbar de sello — único acento de marca, usar con mesura */
+    --primary: 33 65% 44%;              /* #C8862B */
+    --primary-foreground: 54 30% 98%;
+
+    --secondary: 54 16% 87%;            /* superficie secundaria, papel más oscuro */
+    --secondary-foreground: 220 20% 15%;
+
+    --muted: 48 14% 88%;
+    --muted-foreground: 32 20% 32%;     /* #655D4F carbón */
+
+    --accent: 33 55% 90%;               /* lavado ámbar muy suave, solo hovers */
+    --accent-foreground: 33 65% 28%;
+
+    /* Veredicto positivo (sello aprobado / keywords encontradas) */
+    --success: 152 38% 30%;             /* #2F6B4F */
+    --success-foreground: 54 30% 98%;
+
+    /* Veredicto negativo (revisar / keywords faltantes) — reutiliza destructive */
+    --destructive: 8 56% 40%;           /* #A6392C */
+    --destructive-foreground: 54 30% 98%;
+
+    --border: 46 20% 78%;               /* #D9D3C2 línea ledger */
+    --input: 46 20% 78%;
+    --ring: 33 65% 44%;
+
+    /* Banda oscura fija (header / hero / footer) — no depende de modo claro/oscuro */
+    --ink-deep: 222 28% 9%;             /* #10141F */
+    --ink-deep-foreground: 48 20% 92%;
+
     --radius: 0.5rem;
   }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Numerales tabulares para lecturas tipo instrumento (score, %, IDs) */
+.font-mono,
+.tabular-figures {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Recorte de "pestaña de carpeta" reutilizable — esquina superior marcada */
+.tab-cut {
+  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Modo oscuro: mismo sistema "Legajo", papel -> tinta. Se activa con la clase .dark en <html>. */
+@layer base {
+  .dark {
+    --background: 222 24% 8%;
+    --foreground: 48 18% 92%;
+    --card: 222 20% 12%;
+    --card-foreground: 48 18% 92%;
+    --popover: 222 20% 12%;
+    --popover-foreground: 48 18% 92%;
+    --primary: 36 72% 54%;
+    --primary-foreground: 222 28% 8%;
+    --secondary: 222 16% 18%;
+    --secondary-foreground: 48 18% 90%;
+    --muted: 222 14% 16%;
+    --muted-foreground: 40 12% 68%;
+    --accent: 33 30% 19%;
+    --accent-foreground: 36 72% 72%;
+    --success: 152 42% 52%;
+    --success-foreground: 222 28% 8%;
+    --destructive: 8 66% 60%;
+    --destructive-foreground: 222 28% 8%;
+    --border: 222 14% 23%;
+    --input: 222 14% 23%;
+    --ring: 36 72% 54%;
+    --ink-deep: 222 32% 5%;
+    --ink-deep-foreground: 48 20% 92%;
+    color-scheme: dark;
+  }
+}
+
+@media print {
+  html, body { background: #fff !important; color: #000 !important; }
 }

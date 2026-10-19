@@ -1,24 +1,13 @@
-export interface GapAnalysis {
-  technicalSkills: {
-    matching: string[];
-    missing: string[];
-  };
-  softSkills: {
-    matching: string[];
-    missing: string[];
-  };
+/** Contrato real de POST /job-match/analyze (backend). */
+export interface JobMatchPayload {
+  nombre: string;
+  ofertaTexto: string;
 }
 
 export interface JobMatchResult {
-  matchPercentage: number;
-  jobTitle: string;
-  companyName?: string;
-  summary: string;
-  gaps: GapAnalysis;
-  recommendations: string[];
-}
-
-export interface JobMatchPayload {
-  cvText: string;
-  jobDescription: string;
+  id: string;
+  scoreCompatibilidad: number;
+  cumple: string[];
+  noCumple: string[];
+  resumen: string;
 }

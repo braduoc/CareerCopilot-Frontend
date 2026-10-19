@@ -1,18 +1,16 @@
 import { apiClient } from "@/lib/api-client";
-import { InterviewQuestion, AnswerFeedback, InterviewSessionConfig } from "@/types/entrevista";
+import { InterviewReply, InterviewStartPayload, InterviewStartResponse } from "@/types/entrevista";
 
 export const interviewService = {
-  async startSession(config: InterviewSessionConfig): Promise<InterviewQuestion> {
-    return apiClient<InterviewQuestion>("/interview/start", {
+  start: (jobMatchId: string, payload: InterviewStartPayload) =>
+    apiClient<InterviewStartResponse>(`/interview/start/${jobMatchId}`, {
       method: "POST",
-      body: JSON.stringify(config),
-    });
-  },
-
-  async submitAnswer(questionId: string, answer: string): Promise<{ feedback: AnswerFeedback; nextQuestion?: InterviewQuestion }> {
-    return apiClient("/interview/answer", {
+      body: JSON.stringify(payload),
+    }),
+  sendMessage: (interviewId: string, contenido: string) =>
+    apiClient<InterviewReply>(`/interview/${interviewId}/message`, {
       method: "POST",
-      body: JSON.stringify({ questionId, answer }),
-    });
-  },
+      body: JSON.stringify({ contenido }),
+    }),
+  finish: (interviewId: string) => apiClient<void>(`/interview/${interviewId}/finish`, { method: "POST" }),
 };

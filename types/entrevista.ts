@@ -1,21 +1,19 @@
-export type QuestionCategory = "technical" | "behavioral" | "situational";
+export interface InterviewStartPayload {
+  tipo: string;
+  seniority: string;
+}
 
-export interface InterviewQuestion {
+export interface InterviewStartResponse {
+  entrevistaId: string;
+  respuesta: string;
+}
+
+export interface InterviewReply {
+  respuesta: string;
+}
+
+export interface InterviewMessage {
   id: string;
-  category: QuestionCategory;
-  question: string;
-  contextOrTips?: string;
-}
-
-export interface AnswerFeedback {
-  score: number; // 0 - 100
-  strengths: string[];
-  areasForImprovement: string[];
-  suggestedAnswer: string;
-}
-
-export interface InterviewSessionConfig {
-  jobTitle: string;
-  category: QuestionCategory | "mixed";
-  numberOfQuestions: number;
+  sender: "ai" | "user";
+  text: string;
 }
