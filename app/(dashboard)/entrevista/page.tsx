@@ -6,18 +6,25 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Notice } from "@/components/ui/notice"
+import { Progress } from "@/components/ui/progress"
 import { ChatInput } from "@/components/modules/entrevista/chat-input"
-import { MessageSquare, History, ArrowLeft, AlertCircle, Mic, User, Loader2, Flag } from "lucide-react"
+import { InterviewEvaluation } from "@/components/modules/entrevista/interview-evaluation"
+import { MessageSquare, History, ArrowLeft, AlertCircle, Mic, User, Loader2, Flag, RefreshCw } from "lucide-react"
 import { historialService } from "@/services/historial-service"
 import { interviewService } from "@/services/interview-service"
-import { InterviewMessage } from "@/types/entrevista"
+import {
+  InterviewEvaluation as Evaluation,
+  InterviewMessage,
+  InterviewSeniority,
+  InterviewType,
+} from "@/types/entrevista"
 
-const TYPES = [
+const TYPES: { value: InterviewType; label: string }[] = [
   { value: "mixta", label: "Mixta (técnica y conductual)" },
   { value: "tecnica", label: "Técnica" },
   { value: "conductual", label: "Conductual" },
 ]
-const LEVELS = [
+const LEVELS: { value: InterviewSeniority; label: string }[] = [
   { value: "Junior", label: "Junior / Inicial" },
   { value: "Semi-Senior", label: "Intermedio / Semi-Senior" },
   { value: "Senior", label: "Senior / Liderazgo" },
@@ -33,13 +40,19 @@ function EntrevistaContent() {
 
   const [jobName, setJobName] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [tipo, setTipo] = useState("mixta")
-  const [seniority, setSeniority] = useState("Junior")
+  const [tipo, setTipo] = useState<InterviewType>("mixta")
+  const [seniority, setSeniority] = useState<InterviewSeniority>("Junior")
   const [interviewId, setInterviewId] = useState<string | null>(null)
   const [messages, setMessages] = useState<InterviewMessage[]>([])
+  const [currentQuestion, setCurrentQuestion] = useState(1)
+  const [totalQuestions, setTotalQuestions] = useState(0)
+  const [answered, setAnswered] = useState(0)
   const [isStarting, setIsStarting] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [finished, setFinished] = useState(false)
+  const [allAnswered, setAllAnswered] = useState(false)
+  const [isEvaluating, setIsEvaluating] = useState(false)
+  const [confirmFinish, setConfirmFinish] = useState(false)
+  const [evaluation, setEvaluation] = useState<Evaluation | null>(null)
   const [error, setError] = useState<string | null>(null)
   const endRef = useRef<HTMLDivElement>(null)
 
@@ -53,7 +66,7 @@ function EntrevistaContent() {
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
-  }, [messages, isSending])
+  }, [messages, isSending, isEvaluating])
 
   if (!historyId) {
     return (
@@ -75,8 +88,7 @@ function EntrevistaContent() {
     )
   }
 
-  const push = (sender: "ai" | "user", text: string) =>
-    setMessages((prev) => [...prev, { id: `${Date.now()}-${prev.length}`, sender, text }])
+  const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 
   const handleStart = async () => {
     setIsStarting(true)
@@ -85,7 +97,11 @@ function EntrevistaContent() {
       const res = await interviewService.start(historyId, { tipo, seniority })
       setInterviewId(res.entrevistaId)
       setMessages([{ id: "first", sender: "ai", text: res.respuesta }])
-      setFinished(false)
+      setCurrentQuestion(res.preguntaActual)
+      setTotalQuestions(res.totalPreguntas)
+      setAnswered(0)
+      setAllAnswered(false)
+      setEvaluation(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo iniciar la entrevista.")
     } finally {
@@ -93,38 +109,61 @@ function EntrevistaContent() {
     }
   }
 
-  const handleSend = async (text: string) => {
-    if (!interviewId) return
-    push("user", text)
-    setIsSending(true)
+  const requestEvaluation = async (id: string) => {
+    setIsEvaluating(true)
+    setConfirmFinish(false)
     setError(null)
     try {
-      const res = await interviewService.sendMessage(interviewId, text)
-      push("ai", res.respuesta)
+      setEvaluation(await interviewService.finish(id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo enviar tu respuesta.")
+      setError(err instanceof Error ? err.message : "No se pudo generar la evaluación.")
     } finally {
-      setIsSending(false)
+      setIsEvaluating(false)
     }
   }
 
-  const handleFinish = async () => {
-    if (!interviewId) return
+  const handleSend = async (text: string): Promise<boolean> => {
+    if (!interviewId) return false
+    const userMessage: InterviewMessage = { id: newId(), sender: "user", text }
+    setMessages((prev) => [...prev, userMessage])
+    setIsSending(true)
+    setConfirmFinish(false)
     setError(null)
     try {
-      await interviewService.finish(interviewId)
-      setFinished(true)
+      const res = await interviewService.sendMessage(interviewId, text)
+      setMessages((prev) => [...prev, { id: newId(), sender: "ai", text: res.respuesta }])
+      setAnswered((n) => n + 1)
+      setCurrentQuestion(res.preguntaActual)
+      setTotalQuestions(res.totalPreguntas)
+      if (res.finalizada) {
+        setAllAnswered(true)
+        setIsSending(false)
+        await requestEvaluation(interviewId)
+      }
+      return true
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo finalizar la entrevista.")
+      // La respuesta no se guardó: se quita del chat y vuelve al campo de texto para reintentar.
+      setMessages((prev) => prev.filter((m) => m.id !== userMessage.id))
+      setError(err instanceof Error ? err.message : "No se pudo enviar tu respuesta.")
+      return false
+    } finally {
+      setIsSending(false)
     }
   }
 
   const handleRestart = () => {
     setInterviewId(null)
     setMessages([])
-    setFinished(false)
+    setAnswered(0)
+    setCurrentQuestion(1)
+    setAllAnswered(false)
+    setEvaluation(null)
+    setConfirmFinish(false)
     setError(null)
   }
+
+  const progressValue = totalQuestions > 0 ? Math.round((answered / totalQuestions) * 100) : 0
+  const chatLocked = allAnswered || isEvaluating
 
   return (
     <div className="space-y-6">
@@ -137,7 +176,7 @@ function EntrevistaContent() {
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Vacante: <strong className="text-foreground">{jobName ?? "cargando..."}</strong>
+            Vacante: <strong className="text-foreground">{jobName ?? (loadError ? "no disponible" : "cargando...")}</strong>
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => router.push("/historial")} className="gap-1.5 self-start md:self-auto">
@@ -148,24 +187,28 @@ function EntrevistaContent() {
 
       {loadError && <Notice tone="error">{loadError}</Notice>}
 
-      {!interviewId ? (
+      {evaluation ? (
+        <InterviewEvaluation evaluation={evaluation} jobName={jobName} onRestart={handleRestart} />
+      ) : !interviewId ? (
         <Card className="mx-auto max-w-xl">
           <CardHeader className="border-b border-border">
             <CardTitle className="flex items-center gap-2 text-base">
               <Mic className="h-5 w-5 text-primary" /> Configura tu entrevista
             </CardTitle>
-            <CardDescription>Las preguntas se basan en tu CV y en la vacante seleccionada.</CardDescription>
+            <CardDescription>
+              El entrevistador conoce la oferta, tu CV y las brechas detectadas en el Job Match. Al final recibirás un puntaje y recomendaciones.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 p-6">
             <div className="space-y-1.5">
               <label htmlFor="tipo" className="text-sm font-medium">Tipo de entrevista</label>
-              <select id="tipo" value={tipo} onChange={(e) => setTipo(e.target.value)} className={fieldClass} disabled={isStarting}>
+              <select id="tipo" value={tipo} onChange={(e) => setTipo(e.target.value as InterviewType)} className={fieldClass} disabled={isStarting}>
                 {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">
               <label htmlFor="nivel" className="text-sm font-medium">Nivel</label>
-              <select id="nivel" value={seniority} onChange={(e) => setSeniority(e.target.value)} className={fieldClass} disabled={isStarting}>
+              <select id="nivel" value={seniority} onChange={(e) => setSeniority(e.target.value as InterviewSeniority)} className={fieldClass} disabled={isStarting}>
                 {LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
               </select>
             </div>
@@ -185,23 +228,41 @@ function EntrevistaContent() {
         </Card>
       ) : (
         <Card>
-          <CardHeader className="border-b border-border">
-            <div className="flex items-center justify-between gap-3">
+          <CardHeader className="space-y-4 border-b border-border">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="rounded-sm border border-border bg-secondary p-2 text-primary">
                   <MessageSquare className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-base">Reclutador virtual</CardTitle>
-                  <CardDescription>{finished ? "Entrevista finalizada" : "Responde con el mayor detalle posible"}</CardDescription>
+                  <CardTitle className="text-base">Entrevistador virtual</CardTitle>
+                  <CardDescription>
+                    {chatLocked ? "Entrevista terminada" : `Pregunta ${Math.min(currentQuestion, totalQuestions)} de ${totalQuestions}`}
+                  </CardDescription>
                 </div>
               </div>
-              {!finished && (
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={handleFinish} disabled={isSending}>
-                  <Flag className="h-3.5 w-3.5" /> Finalizar
-                </Button>
+              {!chatLocked && (
+                confirmFinish ? (
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">¿Terminar y evaluar {answered} {answered === 1 ? "respuesta" : "respuestas"}?</span>
+                    <Button size="sm" onClick={() => requestEvaluation(interviewId)}>Sí, evaluar</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setConfirmFinish(false)}>Seguir</Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => setConfirmFinish(true)}
+                    disabled={isSending || answered === 0}
+                    title={answered === 0 ? "Responde al menos una pregunta para recibir una evaluación" : undefined}
+                  >
+                    <Flag className="h-3.5 w-3.5" /> Terminar y evaluar
+                  </Button>
+                )
               )}
             </div>
+            <Progress value={progressValue} aria-label={`${answered} de ${totalQuestions} preguntas respondidas`} />
           </CardHeader>
           <CardContent className="space-y-4 p-6">
             <div className="max-h-[480px] space-y-4 overflow-y-auto pr-1" aria-live="polite">
@@ -230,22 +291,31 @@ function EntrevistaContent() {
               ))}
               {isSending && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> El reclutador está escribiendo...
+                  <Loader2 className="h-4 w-4 animate-spin" /> El entrevistador está escribiendo...
+                </div>
+              )}
+              {isEvaluating && (
+                <div className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 p-4 text-sm text-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" /> Analizando tus respuestas y calculando tu puntaje...
                 </div>
               )}
               <div ref={endRef} />
             </div>
 
-            {error && <Notice tone="error">{error}</Notice>}
-
-            {finished ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-secondary/40 p-4 text-sm">
-                <span className="text-foreground">Terminaste esta entrevista. Puedes practicar de nuevo cuando quieras.</span>
-                <Button size="sm" onClick={handleRestart}>Nueva entrevista</Button>
-              </div>
-            ) : (
-              <ChatInput onSendMessage={handleSend} isLoading={isSending} />
+            {error && (
+              <Notice tone="error">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span>{error}</span>
+                  {allAnswered && !isEvaluating && (
+                    <Button size="sm" variant="outline" className="gap-1.5" onClick={() => requestEvaluation(interviewId)}>
+                      <RefreshCw className="h-3.5 w-3.5" /> Reintentar evaluación
+                    </Button>
+                  )}
+                </div>
+              </Notice>
             )}
+
+            {!chatLocked && <ChatInput onSendMessage={handleSend} isLoading={isSending} />}
           </CardContent>
         </Card>
       )}

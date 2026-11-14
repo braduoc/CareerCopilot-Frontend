@@ -9,12 +9,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Notice } from "@/components/ui/notice"
 import { Progress } from "@/components/ui/progress"
-import { Briefcase, Target, FileText, CheckCircle2, XCircle, RefreshCw, MessageSquare, Mail } from "lucide-react"
+import { Briefcase, Target, FileText, CheckCircle2, XCircle, RefreshCw, MessageSquare, Mail, Link2, Lightbulb, Loader2 } from "lucide-react"
 import { jobMatchService } from "@/services/job-match-service"
 import { dashboardService } from "@/services/dashboard-service"
 import { JobMatchResult } from "@/types/job-match"
 
 const MIN_OFFER_LENGTH = 20
+const MAX_OFFER_LENGTH = 30000
+
+function isHttpUrl(value: string) {
+  try {
+    const url = new URL(value.trim())
+    return url.protocol === "http:" || url.protocol === "https:"
+  } catch {
+    return false
+  }
+}
 
 export default function JobMatchPage() {
   const router = useRouter()
@@ -25,6 +35,10 @@ export default function JobMatchPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<JobMatchResult | null>(null)
+  const [offerUrl, setOfferUrl] = useState("")
+  const [isExtracting, setIsExtracting] = useState(false)
+  const [extractError, setExtractError] = useState<string | null>(null)
+  const [extractInfo, setExtractInfo] = useState<string | null>(null)
 
   // Para comparar necesitamos un CV ya analizado en Diagnóstico ATS.
   useEffect(() => {
@@ -38,7 +52,31 @@ export default function JobMatchPage() {
   }, [])
 
   const offerTooShort = jobDescription.trim().length < MIN_OFFER_LENGTH
-  const canSubmit = hasCv !== false && jobName.trim().length > 0 && !offerTooShort && !isAnalyzing
+  const offerTooLong = jobDescription.trim().length > MAX_OFFER_LENGTH
+  const busy = isAnalyzing || isExtracting
+  const canSubmit = hasCv !== false && jobName.trim().length > 0 && !offerTooShort && !offerTooLong && !busy
+  const canExtract = isHttpUrl(offerUrl) && !busy
+
+  const handleExtract = async () => {
+    if (!canExtract) return
+    setIsExtracting(true)
+    setExtractError(null)
+    setExtractInfo(null)
+    try {
+      const offer = await jobMatchService.extractFromUrl(offerUrl.trim())
+      const company = offer.empresa && !offer.nombre.toLowerCase().includes(offer.empresa.toLowerCase())
+        ? ` — ${offer.empresa}`
+        : ""
+      setJobName(`${offer.nombre}${company}`.slice(0, 255))
+      setJobDescription(offer.ofertaTexto)
+      const host = new URL(offer.url).hostname.replace(/^www\./, "")
+      setExtractInfo(`Oferta importada desde ${host}. Revisa el texto y corrígelo si hace falta antes de calcular.`)
+    } catch (err) {
+      setExtractError(err instanceof Error ? err.message : "No se pudo leer la oferta desde ese enlace.")
+    } finally {
+      setIsExtracting(false)
+    }
+  }
 
   const handleMatch = async () => {
     if (!canSubmit) return
@@ -62,6 +100,9 @@ export default function JobMatchPage() {
     setJobDescription("")
     setError(null)
     setResult(null)
+    setOfferUrl("")
+    setExtractError(null)
+    setExtractInfo(null)
   }
 
   return (
@@ -123,9 +164,40 @@ export default function JobMatchPage() {
                   <Briefcase className="h-5 w-5 text-primary" />
                   2. Oferta de trabajo
                 </CardTitle>
-                <CardDescription>Escribe el nombre de la vacante y pega sus requisitos.</CardDescription>
+                <CardDescription>Pega el enlace de la oferta o escribe sus datos a mano.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
+                <div className="space-y-1.5">
+                  <label htmlFor="job-url" className="text-sm font-medium text-foreground">
+                    Enlace de la oferta <span className="font-normal text-muted-foreground">(opcional)</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="job-url"
+                      type="url"
+                      inputMode="url"
+                      placeholder="https://www.linkedin.com/jobs/view/..."
+                      value={offerUrl}
+                      onChange={(e) => setOfferUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault()
+                          handleExtract()
+                        }
+                      }}
+                      disabled={busy}
+                    />
+                    <Button type="button" variant="outline" onClick={handleExtract} disabled={!canExtract} className="shrink-0 gap-2">
+                      {isExtracting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
+                      {isExtracting ? "Leyendo..." : "Extraer"}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Funciona con LinkedIn, Computrabajo, GetOnBoard y la mayoría de portales de empleo.
+                  </p>
+                  {extractError && <Notice tone="error">{extractError}</Notice>}
+                  {extractInfo && <Notice tone="success">{extractInfo}</Notice>}
+                </div>
                 <div className="space-y-1.5">
                   <label htmlFor="job-name" className="text-sm font-medium text-foreground">
                     Nombre de la vacante
@@ -136,7 +208,7 @@ export default function JobMatchPage() {
                     value={jobName}
                     maxLength={255}
                     onChange={(e) => setJobName(e.target.value)}
-                    disabled={isAnalyzing}
+                    disabled={busy}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -148,12 +220,17 @@ export default function JobMatchPage() {
                     placeholder="Ejemplo: Requerimos desarrollador backend con experiencia en Python, FastAPI y SQL..."
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    disabled={isAnalyzing}
+                    disabled={busy}
                     className="flex min-h-[160px] w-full resize-y rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-50"
                   />
                   {jobDescription.length > 0 && offerTooShort && (
                     <p className="text-xs text-muted-foreground">
                       Escribe al menos {MIN_OFFER_LENGTH} caracteres ({jobDescription.trim().length}/{MIN_OFFER_LENGTH}).
+                    </p>
+                  )}
+                  {offerTooLong && (
+                    <p className="text-xs text-destructive">
+                      La oferta es demasiado larga ({jobDescription.trim().length.toLocaleString("es-CL")} caracteres). Deja solo la descripción y los requisitos (máx. {MAX_OFFER_LENGTH.toLocaleString("es-CL")}).
                     </p>
                   )}
                 </div>
@@ -257,6 +334,23 @@ export default function JobMatchPage() {
               </CardContent>
             </Card>
           </div>
+
+          {result.recomendaciones?.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <Lightbulb className="h-4 w-4" /> Recomendaciones para esta postulación
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+                  {result.recomendaciones.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">

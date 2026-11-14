@@ -1,5 +1,11 @@
+export interface ATSScoreItem {
+  label: string;
+  score: number;
+  max: number;
+}
+
 export interface ATSDiagnostic {
-  score: number; // Porcentaje general (ej: 85)
+  score: number; // Suma de la rúbrica (0-100)
   parsedText: string;
   summary: string;
   sections: {
@@ -11,10 +17,8 @@ export interface ATSDiagnostic {
   strengths: string[];
   improvements: string[];
   missingKeywords: string[];
-}
-
-export interface ATSUploadResponse {
-  success: boolean;
-  message: string;
-  data?: ATSDiagnostic;
+  /** Desglose del puntaje por criterio. Ausente en diagnósticos antiguos. */
+  scoreBreakdown?: ATSScoreItem[] | null;
+  /** Perfil profesional detectado en el CV. */
+  detectedRole?: string | null;
 }
