@@ -1,108 +1,179 @@
-Arquitectura General de IntegraciónEl sistema se compone de tres capas principales:[ Frontend / React Hooks ] 
-          │
-          ▼ (HTTP / API Routes)
-[ API Routes - Next.js (src/app/api/...) ]
-          │
-          ▼ (SDK / Prompts)
-[ Servicio de IA (OpenAI, Anthropic, Gemini, etc.) ]
-1. Variables de Entorno RequeridasCrea un archivo .env.local en la raíz del proyecto con la configuración del proveedor de IA que elijas:Bash# Ejemplo usando OpenAI
-OPENAI_API_KEY="sk-proj-tu-api-key-aqui"
+INTEGRACIÓN FRONTEND ↔ BACKEND — CareerCopilot
+================================================
 
-# O usando Anthropic Claude
-ANTHROPIC_API_KEY="sk-ant-tu-api-key-aqui"
+IMPORTANTE: el frontend NO tiene API routes propias (no existe app/api) y
+NUNCA llama a un proveedor de IA. Toda la lógica de IA y la base de datos
+viven en el backend FastAPI (repo CareerCopilot-Backend). El frontend solo
+hace peticiones HTTP a ese backend.
 
-# O usando Google Gemini
-GEMINI_API_KEY="tu-gemini-api-key-aqui"
-2. Endpoints Requeridos (API Routes)Para conectar todos los Custom Hooks (useAts, useInterview, useJobMatch), debes implementar 4 rutas de API en Next.js App Router:Summary table de EndpointsRutaMétodoPropósitoHook Asociado/api/ats/analyzePOSTRecibe un archivo (PDF/DOCX) y genera el diagnóstico ATSuseAts/api/job-match/comparePOSTCompara un CV contra una descripción de empleouseJobMatch/api/interview/startPOSTInicia una sesión de entrevista y genera las preguntas inicialesuseInterview/api/interview/respondPOSTEvalúa la respuesta del candidato con metodología STAR y genera la siguiente interacciónuseInterview3. Especificación Técnica de los Endpoints3.1. Diagnóstico ATS (/api/ats/analyze)Método: POSTContent-Type: multipart/form-dataBody de Entrada:TypeScriptFormData {
-  file: File // Archivo PDF o DOCX del CV
-}
-Respuesta Esperada (200 OK):JSON{
-  "score": 78,
-  "summary": "El CV presenta buena estructura pero carece de palabras clave relevantes para roles senior.",
-  "sections": {
-    "contactInfo": true,
-    "workExperience": true,
-    "education": true,
-    "skills": false
-  },
-  "strengths": [
-    "Uso claro de verbos de acción",
-    "Formato de fechas uniforme"
-  ],
-  "improvements": [
-    "Incluir métricas cuantificables en los logros",
-    "Agregar una sección explicita de habilidades técnicas"
-  ],
-  "missingKeywords": ["Docker", "Kubernetes", "CI/CD", "TypeScript"]
-}
-3.2. Comparación de Trabajo / Job Match (/api/job-match/compare)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
-  "jobTitle": "Frontend Developer Senior",
-  "jobDescription": "Buscamos un desarrollador React con experiencia en Next.js, Tailwind y TypeScript...",
-  "cvText": "Texto extraído del CV del candidato..."
-}
-Respuesta Esperada (200 OK):JSON{
-  "matchPercentage": 82,
-  "analysis": "El perfil encaja muy bien con el stack tecnológico principal, pero presenta brechas en la parte de pruebas unitarias.",
-  "matchingSkills": ["React", "Next.js", "Tailwind CSS", "TypeScript"],
-  "missingSkills": ["Jest", "Cypress", "GraphQL"],
-  "recommendations": [
-    "Mencionar proyectos donde hayas implementado pruebas automatizadas",
-    "Destacar experiencia previa con APIs GraphQL si la posees"
-  ]
-}
-3.3. Inicio de Entrevista (/api/interview/start)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
-  "jobTitle": "Backend Engineer",
-  "seniority": "Senior",
-  "interviewType": "Technical",
-  "totalQuestions": 5
-}
-Respuesta Esperada (200 OK):JSON{
-  "sessionId": "session_123456",
-  "initialMessage": {
-    "id": "msg_001",
-    "role": "interviewer",
-    "content": "¡Hola! Bienvenido a tu simulación. Empecemos: ¿Puedes explicar cómo manejarías la concurrencia en un sistema de alto tráfico?",
-    "timestamp": "2026-09-04T17:30:00.000Z"
-  }
-}
-3.4. Respuesta y Retroalimentación de Entrevista (/api/interview/respond)Método: POSTContent-Type: application/jsonBody de Entrada:JSON{
-  "sessionId": "session_123456",
-  "userAnswer": "Para la concurrencia utilizaría un esquema de colas con Redis y trabajadores asíncronos...",
-  "currentQuestionIndex": 1
-}
-Respuesta Esperada (200 OK):JSON{
-  "feedbackMessage": {
-    "id": "msg_002",
-    "role": "interviewer",
-    "content": "Buena respuesta. Bajo el enfoque STAR, identifico bien la Situación y Tarea, pero te sugiero especificar más los **Resultados** medibles.",
-    "timestamp": "2026-09-04T17:31:00.000Z",
-    "starEvaluation": {
-      "situation": true,
-      "task": true,
-      "action": true,
-      "result": false
-    }
-  },
-  "nextQuestionMessage": {
-    "id": "msg_003",
-    "role": "interviewer",
-    "content": "Siguiente pregunta: ¿Cómo abordarías un problema de 'Memory Leak' en un servicio en producción?",
-    "timestamp": "2026-09-04T17:31:05.000Z"
-  },
-  "isFinished": false
-}
-4. Estructura de Prompts del Sistema (System Prompts)Para garantizar respuestas en JSON estructurado por parte de la IA, utiliza estos esquemas de prompt en tu servidor:System Prompt para Análisis ATSPlaintextEres un evaluador experto de Sistemas de Seguimiento de Candidatos (ATS). 
-Analiza el texto del CV adjunto y devuelve EXCLUSIVAMENTE un objeto JSON válido con el siguiente formato:
-{
-  "score": number (0-100),
-  "summary": string,
-  "sections": { "contactInfo": boolean, "workExperience": boolean, "education": boolean, "skills": boolean },
-  "strengths": string[],
-  "improvements": string[],
-  "missingKeywords": string[]
-}
-System Prompt para Entrevista Técnica (STAR)PlaintextActúas como un entrevistador técnico sénior. Tu objetivo es evaluar al candidato usando la metodología STAR (Situación, Tarea, Acción, Resultado).
-En cada respuesta del usuario:
-1. Brinda retroalimentación constructiva.
-2. Identifica qué componentes STAR cubrió.
-3. Haz la siguiente pregunta técnica relevante al puesto.
+
+1. ARQUITECTURA
+---------------
+
+  Navegador (Next.js, http://localhost:3000)
+      │  fetch  +  Authorization: Bearer <access_token de Supabase>
+      ▼
+  Backend FastAPI (http://localhost:8000/api/v1)
+      │
+      ├──► IA (Groq, modelo openai/gpt-oss-120b; configurable con AI_PROVIDER)
+      └──► PostgreSQL (Supabase)
+
+  Supabase Auth: el login y el registro se hacen desde el navegador con el
+  SDK de Supabase. Supabase emite el JWT y el backend lo valida.
+
+
+2. VARIABLES DE ENTORNO (.env.local del frontend)
+-------------------------------------------------
+
+  Copia .env.local.example a .env.local:
+
+  NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+  NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-publica
+
+  - NEXT_PUBLIC_API_URL debe terminar en el API_PREFIX del backend (/api/v1).
+  - El proyecto de Supabase debe ser el MISMO que usa el backend
+    (SUPABASE_URL del backend); si no, el backend rechaza el token (401).
+  - Aquí NO van claves de IA. Esas se configuran solo en el .env del backend.
+
+  En el backend, CORS_ORIGINS debe incluir la URL del frontend
+  (por defecto http://localhost:3000).
+
+
+3. CÓMO SE HACEN LAS PETICIONES
+-------------------------------
+
+  Todas pasan por lib/api-client.ts (función apiClient):
+  - Antepone NEXT_PUBLIC_API_URL al endpoint.
+  - Adjunta el token de la sesión de Supabase (lib/auth.ts → getAccessToken).
+  - Envía JSON, salvo con FormData (subida de archivos).
+  - Si el backend responde 401: borra la sesión y redirige a /login.
+  - En errores, lee el campo "detail" que devuelve FastAPI y lanza ApiError.
+
+  Los componentes no llaman a apiClient directamente: usan los servicios de
+  services/ (normalmente a través de los hooks de hooks/).
+
+
+4. ENDPOINTS (todos requieren token; prefijo /api/v1)
+-----------------------------------------------------
+
+  Servicio (services/)            Método  Ruta backend
+  ------------------------------  ------  ------------------------------------
+  profileService.me               GET     /auth/me
+  profileService.update           PATCH   /auth/me
+  dashboardService.summary        GET     /dashboard/summary
+  atsService.analyzeCv            POST    /ats/analyze        (multipart, campo "file")
+  atsService.getLatestDiagnostic  GET     /ats/latest         (puede devolver null)
+  atsService.history              GET     /ats/history
+  atsService.getById              GET     /ats/{id}
+  jobMatchService.analyzeMatch    POST    /job-match/analyze
+  jobMatchService.extractFromUrl  POST    /job-match/extract  (lee la oferta desde una URL)
+  interviewService.start          POST    /interview/start/{jobMatchId}
+  interviewService.sendMessage    POST    /interview/{entrevistaId}/message
+  interviewService.finish         POST    /interview/{entrevistaId}/finish   (devuelve la evaluación)
+  emailService.generate           POST    /email/generate
+  emailService.update             PUT     /email/{id}
+  historialService.list           GET     /historial/matches
+  historialService.get            GET     /historial/matches/{id}
+  historialService.remove         DELETE  /historial/matches/{id}
+
+  Los endpoints que usan IA tienen límite de uso por hora (AI_RATE_LIMIT_*
+  en el backend); al superarlo el backend responde con error.
+
+
+5. CONTRATOS (tipos en types/ ↔ schemas.py de cada módulo del backend)
+---------------------------------------------------------------------
+
+  Los nombres de campos son idénticos en ambos lados. Si cambias uno,
+  cambia el otro.
+
+  ATS — POST /ats/analyze
+    Entrada: FormData { file: PDF o DOCX }
+    Salida (ATSDiagnostic):
+      { score, parsedText, summary,
+        sections: { contactInfo, workExperience, education, skills },
+        strengths[], improvements[], missingKeywords[],
+        scoreBreakdown: [{ label, score, max }] | null,   (desglose de la rúbrica)
+        detectedRole: string | null }
+    El score es la suma de 5 criterios: estructura (20), contacto (10),
+    experiencia y logros (30), habilidades (20) y legibilidad ATS (20).
+    Los diagnósticos antiguos no tienen scoreBreakdown/detectedRole.
+
+  Job Match — POST /job-match/analyze
+    Entrada: { nombre, ofertaTexto }        (ofertaTexto: mínimo 20 caracteres)
+    Salida:  { id, scoreCompatibilidad, cumple[], noCumple[], resumen, recomendaciones[] }
+    (recomendaciones no se guarda en el historial: solo viene en esta respuesta)
+
+  Job Match — POST /job-match/extract
+    Entrada: { url }
+    Salida:  { nombre, empresa, ofertaTexto, fuente, url }
+    fuente = "datos-estructurados" (schema.org JobPosting, sin IA; p. ej.
+    Computrabajo) o "ia" (Groq aísla la oferta del texto de la página; p. ej.
+    LinkedIn, GetOnBoard). No guarda nada: el usuario revisa el texto y luego
+    llama a /analyze. Responde 422 con un mensaje claro si el sitio exige
+    iniciar sesión (Indeed), carga la oferta con JavaScript (Laborum,
+    Trabajando) o la URL apunta a una red interna.
+
+  Entrevista — POST /interview/start/{jobMatchId}
+    Entrada: { tipo: "mixta"|"tecnica"|"conductual",
+               seniority: "Junior"|"Semi-Senior"|"Senior" }
+    Salida:  { entrevistaId, respuesta, preguntaActual, totalPreguntas }
+    El entrevistador recibe la oferta, el CV y las brechas (noCumple) del Job Match.
+
+  Entrevista — POST /interview/{entrevistaId}/message
+    Entrada: { contenido }                  (1 a 10 000 caracteres)
+    Salida:  { respuesta, finalizada, preguntaActual, totalPreguntas }
+    finalizada = true tras responder la última pregunta (INTERVIEW_QUESTIONS
+    del backend, 6 por defecto): el frontend pide entonces la evaluación.
+    Después de eso, más mensajes responden 409.
+
+  Entrevista — POST /interview/{entrevistaId}/finish
+    Sin cuerpo. Devuelve la evaluación (si ya existía, la misma, sin gastar IA):
+    { entrevistaId, puntaje, nivel, resumen, preguntasRespondidas, totalPreguntas,
+      competencias: [{ nombre, puntaje }],
+      preguntas: [{ pregunta, respuesta, puntaje, comentario, sugerencia }],
+      fortalezas[], recomendaciones[] }
+    puntaje = promedio de las respuestas. 400 si no se respondió ninguna.
+
+  Email — POST /email/generate
+    Entrada: { jobMatchId, recipientName?, tone }
+    Salida:  { id, subject, body }
+
+  Historial — GET /historial/matches
+    Salida: [{ id, nombre, scoreCompatibilidad, fecha }]
+    Detalle (/matches/{id}) añade: { cumple[], noCumple[], ofertaTexto }
+
+  Dashboard — GET /dashboard/summary
+    Salida: { currentAtsScore, latestMatchScore, historyCount, plan,
+              interviewsUsed, interviewsLimit, monthMatches, matchesLimit }
+    (los *Limit son null en plan premium = sin límite)
+
+  Perfil — GET/PATCH /auth/me
+    PATCH entrada: { nombre_completo }
+    Salida: { id, email, nombre_completo, plan, created_at }
+    (este endpoint usa snake_case, a diferencia del resto)
+
+
+6. ARRANCAR EN LOCAL
+--------------------
+
+  1. Backend: crea su .env a partir de .env.example y levántalo en el
+     puerto 8000 (uvicorn app.main:app --port 8000, o docker compose up).
+     Documentación interactiva: http://localhost:8000/docs
+  2. Frontend: crea .env.local (ver sección 2), luego npm install y npm run dev.
+  3. Abre http://localhost:3000 e inicia sesión.
+
+  Errores de la IA (Groq) que puede mostrar el frontend:
+  - 503 "La IA alcanzó su límite de uso por minuto": cuota gratuita de Groq;
+    esperar unos segundos.
+  - 503 "El servicio de IA no está configurado": falta OPENAI_API_KEY en el
+    .env del backend.
+  - 502 / 504: el proveedor falló o tardó demasiado; reintentar.
+
+  Problemas típicos:
+  - "No se pudo conectar con el servidor" → el backend no está corriendo o
+    NEXT_PUBLIC_API_URL es incorrecta.
+  - Error de CORS en la consola → falta la URL del frontend en CORS_ORIGINS.
+  - Te devuelve a /login nada más entrar → 401: el proyecto de Supabase del
+    frontend y del backend no coinciden, o el usuario no existe en la tabla
+    "usuarios" del backend.

@@ -12,7 +12,7 @@ export interface AtsScoreCardProps {
 }
 
 export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
-  const { score, summary, sections, strengths, improvements, missingKeywords } = diagnostic;
+  const { score, summary, sections, strengths, improvements, missingKeywords, scoreBreakdown, detectedRole } = diagnostic;
 
   const isPass = score >= 60;
 
@@ -22,7 +22,18 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
         <h1 className="text-2xl font-bold">Diagnóstico ATS — CareerCopilot</h1>
         <p className="mt-1 text-sm">{new Date().toLocaleDateString("es-CL", { dateStyle: "long" })}</p>
         <p className="mt-4 text-4xl font-bold">{score} / 100 · {isPass ? "Aprobado" : "Revisar"}</p>
+        {detectedRole && <p className="mt-2 text-sm">Perfil detectado: {detectedRole}</p>}
         <p className="mt-3 text-sm leading-relaxed">{summary}</p>
+        {scoreBreakdown && scoreBreakdown.length > 0 && (
+          <>
+            <h2 className="mt-5 text-base font-bold">Desglose del puntaje</h2>
+            <ul className="mt-1 list-disc pl-5 text-sm">
+              {scoreBreakdown.map((item) => (
+                <li key={item.label}>{item.label}: {item.score} / {item.max}</li>
+              ))}
+            </ul>
+          </>
+        )}
         <h2 className="mt-5 text-base font-bold">Secciones detectadas</h2>
         <ul className="mt-1 list-disc pl-5 text-sm">
           <li>Información de contacto: {sections.contactInfo ? "sí" : "no"}</li>
@@ -31,9 +42,9 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
           <li>Habilidades: {sections.skills ? "sí" : "no"}</li>
         </ul>
         <h2 className="mt-5 text-base font-bold">Fortalezas</h2>
-        <ul className="mt-1 list-disc pl-5 text-sm">{strengths.map((t) => <li key={t}>{t}</li>)}</ul>
+        <ul className="mt-1 list-disc pl-5 text-sm">{strengths.map((t, i) => <li key={i}>{t}</li>)}</ul>
         <h2 className="mt-5 text-base font-bold">Sugerencias de mejora</h2>
-        <ul className="mt-1 list-disc pl-5 text-sm">{improvements.map((t) => <li key={t}>{t}</li>)}</ul>
+        <ul className="mt-1 list-disc pl-5 text-sm">{improvements.map((t, i) => <li key={i}>{t}</li>)}</ul>
         <h2 className="mt-5 text-base font-bold">Palabras clave faltantes</h2>
         <p className="mt-1 text-sm">{missingKeywords.length ? missingKeywords.join(", ") : "Ninguna"}</p>
       </PrintOnly>
@@ -45,7 +56,7 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             <div className="flex items-center gap-2">
               <FileCheck2 className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-ink-deep-foreground/60">
-                Resultado del análisis
+                Resultado del análisis{detectedRole ? ` · Perfil detectado: ${detectedRole}` : ""}
               </span>
             </div>
             <div className="flex items-end gap-3">
@@ -95,6 +106,33 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
         </div>
       </div>
 
+      {/* Desglose del puntaje por criterio (no existe en diagnósticos antiguos) */}
+      {scoreBreakdown && scoreBreakdown.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-foreground">
+              Cómo se calculó tu puntaje
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {scoreBreakdown.map((item) => {
+              const pct = item.max > 0 ? Math.round((item.score / item.max) * 100) : 0;
+              return (
+                <div key={item.label} className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
+                    <span className="font-mono text-sm font-semibold text-foreground">
+                      {item.score}/{item.max}
+                    </span>
+                  </div>
+                  <Progress value={pct} aria-label={`${item.label}: ${item.score} de ${item.max}`} />
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Secciones Detectadas */}
       <Card>
         <CardHeader className="pb-3">
@@ -120,6 +158,7 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
+            {strengths.length === 0 && <EmptyItem text="No se detectaron fortalezas destacables." />}
             {strengths.map((item, idx) => (
               <div key={idx} className="flex items-start gap-2 border-b border-border pb-2 last:border-none last:pb-0">
                 <span className="text-sm leading-relaxed text-muted-foreground">
@@ -138,6 +177,7 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
+            {improvements.length === 0 && <EmptyItem text="Sin sugerencias: tu CV está bien optimizado." />}
             {improvements.map((item, idx) => (
               <div key={idx} className="flex items-start gap-2 border-b border-border pb-2 last:border-none last:pb-0">
                 <span className="text-sm leading-relaxed text-muted-foreground">
@@ -156,6 +196,7 @@ export function AtsScoreCard({ diagnostic, onReset }: AtsScoreCardProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-1.5 pt-1">
+            {missingKeywords.length === 0 && <EmptyItem text="No faltan palabras clave relevantes." />}
             {missingKeywords.map((kw, idx) => (
               <Badge key={idx} variant="destructive">
                 {kw}
@@ -181,4 +222,8 @@ function SectionCheck({ label, isValid }: { label: string; isValid: boolean }) {
       </span>
     </div>
   );
+}
+
+function EmptyItem({ text }: { text: string }) {
+  return <p className="text-sm italic text-muted-foreground">{text}</p>;
 }

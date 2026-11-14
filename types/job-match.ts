@@ -10,4 +10,14 @@ export interface JobMatchResult {
   cumple: string[];
   noCumple: string[];
   resumen: string;
+  recomendaciones: string[];
+}
+
+/** POST /job-match/extract: oferta leída desde la URL de un portal. */
+export interface JobExtractResult {
+  nombre: string;
+  empresa: string | null;
+  ofertaTexto: string;
+  fuente: "datos-estructurados" | "ia";
+  url: string;
 }

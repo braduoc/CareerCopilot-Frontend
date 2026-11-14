@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Send, CornerDownLeft, Loader2 } from "lucide-react";
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  /** Si devuelve `false` (o una promesa que resuelve a `false`), el texto se conserva para reintentar. */
+  onSendMessage: (message: string) => void | boolean | Promise<void | boolean>;
   isLoading?: boolean;
   disabled?: boolean;
 }
@@ -13,12 +14,14 @@ interface ChatInputProps {
 export function ChatInput({ onSendMessage, isLoading = false, disabled = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e?: FormEvent) => {
+  const handleSubmit = async (e?: FormEvent) => {
     if (e) e.preventDefault();
-    if (!message.trim() || isLoading || disabled) return;
+    const text = message.trim();
+    if (!text || isLoading || disabled) return;
 
-    onSendMessage(message.trim());
     setMessage("");
+    const ok = await onSendMessage(text);
+    if (ok === false) setMessage(text);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -38,6 +41,8 @@ export function ChatInput({ onSendMessage, isLoading = false, disabled = false }
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isLoading || disabled}
+          maxLength={10000}
+          aria-label="Tu respuesta"
         />
         <Button
           type="submit"

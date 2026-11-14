@@ -1,5 +1,10 @@
 import { apiClient } from "@/lib/api-client";
-import { InterviewReply, InterviewStartPayload, InterviewStartResponse } from "@/types/entrevista";
+import {
+  InterviewEvaluation,
+  InterviewReply,
+  InterviewStartPayload,
+  InterviewStartResponse,
+} from "@/types/entrevista";
 
 export const interviewService = {
   start: (jobMatchId: string, payload: InterviewStartPayload) =>
@@ -12,5 +17,7 @@ export const interviewService = {
       method: "POST",
       body: JSON.stringify({ contenido }),
     }),
-  finish: (interviewId: string) => apiClient<void>(`/interview/${interviewId}/finish`, { method: "POST" }),
+  /** Termina la entrevista y devuelve la evaluación (si ya existía, la misma). */
+  finish: (interviewId: string) =>
+    apiClient<InterviewEvaluation>(`/interview/${interviewId}/finish`, { method: "POST" }),
 };
