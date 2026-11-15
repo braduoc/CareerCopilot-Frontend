@@ -64,3 +64,18 @@ types/        contratos de datos; deben coincidir con los schemas.py del backend
 | `npm run lint` | ESLint |
 
 También hay un `Dockerfile` para desplegar en contenedor.
+
+## Confirmación de correo (Supabase)
+
+Al registrarse, Supabase envía un correo con un enlace. Ese enlace vuelve a `${NEXT_PUBLIC_SITE_URL}/confirm-email`,
+página que inicia la sesión y lleva al usuario a su panel (si el enlace venció, ofrece reenviarlo).
+
+Configuración necesaria en **Supabase → Authentication → URL Configuration**:
+
+| Campo | Desarrollo | Producción |
+|---|---|---|
+| Site URL | `http://localhost:3000` | `https://tu-dominio` |
+| Redirect URLs (agregar) | `http://localhost:3000/**` | `https://tu-dominio/**` |
+
+Si la URL de redirección no está en esa lista, Supabase ignora `emailRedirectTo` y manda al usuario a la *Site URL*.
+En producción define también `NEXT_PUBLIC_SITE_URL` y reconstruye (las variables `NEXT_PUBLIC_*` se fijan al compilar).
