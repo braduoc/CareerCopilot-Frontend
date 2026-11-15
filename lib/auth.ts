@@ -57,6 +57,17 @@ export async function getAccessToken(): Promise<string | null> {
   return typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) : null;
 }
 
+/**
+ * URL pública de la app, usada como destino de los enlaces de los correos de Supabase.
+ * En producción define NEXT_PUBLIC_SITE_URL (ej. https://careercopilot.cl); si no, se usa
+ * el origen desde el que el usuario se registra (localhost en desarrollo).
+ */
+export function getSiteUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+  if (fromEnv) return fromEnv;
+  return typeof window !== "undefined" ? window.location.origin : "";
+}
+
 /** Traduce los mensajes más comunes de Supabase Auth. */
 export function translateAuthError(message: string): string {
   const m = message.toLowerCase();
@@ -65,6 +76,7 @@ export function translateAuthError(message: string): string {
   if (m.includes("already registered") || m.includes("already exists")) return "Ya existe una cuenta con ese correo. Inicia sesión.";
   if (m.includes("at least")) return "La contraseña es demasiado corta. Usa al menos 8 caracteres.";
   if (m.includes("same password")) return "La nueva contraseña debe ser distinta de la anterior.";
+  if (m.includes("expired") || m.includes("otp_expired")) return "El enlace expiró o ya fue usado. Solicita uno nuevo.";
   if (m.includes("rate limit") || m.includes("security purposes")) return "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.";
   if (m.includes("fetch") || m.includes("network")) return "No se pudo conectar con el servicio de autenticación.";
   return message;

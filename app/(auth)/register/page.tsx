@@ -1,7 +1,7 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
-import { saveSession, translateAuthError } from "@/lib/auth";
+import { getSiteUrl, saveSession, translateAuthError } from "@/lib/auth";
 import { Notice } from "@/components/ui/notice";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
@@ -32,7 +32,11 @@ export default function RegisterPage() {
       const { data, error: authError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: { data: { full_name: fullName.trim() } },
+        options: {
+          data: { full_name: fullName.trim() },
+          // A esta página vuelve el usuario al pulsar "Confirmar correo" (ver app/(auth)/confirm-email).
+          emailRedirectTo: `${getSiteUrl()}${APP_ROUTES.CONFIRM_EMAIL}`,
+        },
       });
 
       if (authError) {
@@ -40,7 +44,7 @@ export default function RegisterPage() {
         return;
       }
       if (!data.session || !data.user) {
-        setInfo("Cuenta creada. Revisa tu correo para confirmar el registro y luego inicia sesión.");
+        setInfo("Cuenta creada. Te enviamos un correo: pulsa el enlace de confirmación y te llevaremos directo a tu panel.");
         return;
       }
 

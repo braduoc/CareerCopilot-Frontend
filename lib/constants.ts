@@ -21,6 +21,7 @@ export const APP_ROUTES = {
   REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
+  CONFIRM_EMAIL: "/confirm-email",
   PERFIL: "/perfil",
   ATS: "/ats",
   JOB_MATCH: "/job-match",

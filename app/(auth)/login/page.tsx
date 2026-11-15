@@ -128,7 +128,19 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {error && <Notice tone="error">{error}</Notice>}
+            {error && (
+              <Notice tone="error">
+                {error}
+                {error.toLowerCase().includes("confirmar tu correo") && (
+                  <>
+                    {" "}
+                    <Link href={APP_ROUTES.CONFIRM_EMAIL} className="font-bold underline">
+                      Reenviar correo de confirmación
+                    </Link>
+                  </>
+                )}
+              </Notice>
+            )}
 
             <Button
               type="submit"
